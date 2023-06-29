@@ -13,6 +13,13 @@ import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
 
+// AdBlock Detect
+import detectAnyAdblocker from 'vue-adblock-detector/src/detectAnyAdblocker';
+detectAnyAdblocker().then((detected) => {
+    app.config.globalProperties.$adblock = detected;
+    console.log(detected);
+});
+
 const vuetify = createVuetify({
     components,
     directives,
@@ -22,7 +29,7 @@ const vuetify = createVuetify({
     theme: {
         defaultTheme: 'dark'
     }
-})
+});
 
 const app = createApp(App)
 

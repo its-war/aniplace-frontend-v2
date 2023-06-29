@@ -1,20 +1,20 @@
 <template>
+  <CarouselComponent/>
   <v-main>
     <SliderComponent slide-nome="Lançamentos desta semana" :anime-list="animes"/>
     <SliderComponent slide-nome="Top animes" :anime-list="animes"/>
     <SliderComponent slide-nome="Mais vistos desse mês" :anime-list="animes"/>
     <SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/>
-    <FooterComponent/>
   </v-main>
 </template>
 
 <script>
 import SliderComponent from "@/components/slider/SliderComponent.vue";
-import FooterComponent from "@/components/globalComponents/FooterComponent.vue";
+import CarouselComponent from "@/components/carousel/CarouselComponent.vue";
 
 export default {
   name: "HomeBodyComponent",
-  components: {FooterComponent, SliderComponent},
+  components: {CarouselComponent, SliderComponent},
   data: () => ({
     animes: [
       {

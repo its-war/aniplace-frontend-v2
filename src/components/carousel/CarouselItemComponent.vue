@@ -12,25 +12,14 @@
       <div class="sombra-2">
         <h1 v-if="!isTablet">{{$props.nome}}</h1>
         <h3 v-else>{{$props.nome}}</h3>
-        <h4 v-if="!isTablet" class="nome-alternativo">{{$props.nomeAlternativo}}</h4>
-        <h5 v-else class="nome-alternativo">{{$props.nomeAlternativo}}</h5>
-        <div class="generos">
-          <span :style="spanGeneroStyle" v-for="(genero, i) in $props.generos" :key="i">{{genero.nome}}</span>
+        <div class="sinopse" style="overflow: auto; max-height: 80%; width: 50%; margin-top: 10px">
+          <p v-for="(paragrafo, i) in sinopse" :key="i" style="margin-bottom: 10px; text-indent: 3em; font-size: 12px" :style="isTablet ? 'padding-right: 10px; font-size: 5px !important;' : ''">
+            <span v-if="i < 2">{{paragrafo}}</span>
+          </p>
         </div>
-        <span>
-            {{$props.completo ? 'Completo' : 'Lançamento'}}
-            <v-icon icon="mdi-high-definition-box"></v-icon>
-            <v-icon icon="mdi-closed-caption"></v-icon>
-            {{$props.ano}}
-          </span>
-        <h4>Sinopse:</h4>
-        <p style="max-width: 50%" :style="isTablet ? 'padding-right: 10px; font-size: 14px' : ''">
-          {{this.$limitarTexto($props.sinopse, 400)}}
-        </p>
         <div class="d-flex flex-row" style="align-items: center">
           <v-btn prepend-icon="mdi-play-circle-outline" variant="tonal" color="secondary">Assistir</v-btn>
-          <v-btn prepend-icon="mdi-text-box-plus-outline" variant="tonal" color="primary" style="margin: 0 3px 0 6px">Mais detalhes</v-btn>
-          <div class="myanimelist-icon icone-normal"></div>
+          <v-btn @click="goAnime" prepend-icon="mdi-text-box-plus-outline" variant="tonal" color="primary" style="margin: 0 3px 0 6px">Mais detalhes</v-btn>
         </div>
       </div>
     </div>
@@ -81,39 +70,23 @@ export default {
       required: true
     },
     sinopse: {
-      type: String,
+      type: Array,
       required: true
     },
     img: {
       type: String,
       required: true
     }
+  },
+  methods: {
+    goAnime(){
+      this.$router.push({name: 'Anime', params: {id: this.$props.id}});
+    }
   }
 }
 </script>
 
 <style scoped>
-.nome-alternativo {
-  font-weight: lighter;
-  font-style: italic;
-}
-
-.generos span {
-  margin: 0 2px;
-  padding: 5px 8px;
-  transition: 300ms ease-in-out;
-  border-radius: 15px;
-  cursor: pointer;
-  white-space: nowrap;
-  display: inline-block;
-}
-
-.generos span:hover {
-  text-decoration: none;
-  background-color: rgb(30,30,30);
-  color: #ffffff;
-}
-
 .sombra {
   background-image: linear-gradient(to right, #0e0e12, rgb(14 14 18 / 0)) !important;
   position: absolute;
@@ -128,5 +101,45 @@ export default {
   width: 100%;
   height: 100%;
   padding: 10%;
+}
+
+.sinopse {
+  padding-right: 15px;
+}
+
+.sinopse::-webkit-scrollbar {
+  width: 2px;
+}
+
+.sinopse::-webkit-scrollbar-thumb {
+  background-color: red;
+}
+
+.sinopse::-webkit-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+.sinopse::-ms-scrollbar {
+  width: 2px;
+}
+
+.sinopse::-ms-scrollbar-thumb {
+  background-color: red;
+}
+
+.sinopse::-ms-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+.sinopse::-moz-scrollbar {
+  width: 2px;
+}
+
+.sinopse::-moz-scrollbar-thumb {
+  background-color: red;
+}
+
+.sinopse::-moz-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
 }
 </style>

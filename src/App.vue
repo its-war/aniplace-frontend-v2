@@ -21,6 +21,10 @@ import { RouterView } from 'vue-router'
   font-family: Aqua_Grotesque, sans-serif;
 }
 
+html {
+  scroll-behavior: smooth !important;
+}
+
 .myanimelist-icon {
   background: url("./assets/myanimelist-icon.png") top center;
   background-size: cover;
@@ -28,7 +32,44 @@ import { RouterView } from 'vue-router'
 }
 
 .icone-normal {
+  display: inline-block;
   width: 40px;
   height: 40px;
+}
+
+html::-webkit-scrollbar {
+  width: 2px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: red;
+}
+
+html::-webkit-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+html::-ms-scrollbar {
+  width: 2px;
+}
+
+html::-ms-scrollbar-thumb {
+  background-color: red;
+}
+
+html::-ms-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+html::-moz-scrollbar {
+  width: 2px;
+}
+
+html::-moz-scrollbar-thumb {
+  background-color: red;
+}
+
+html::-moz-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
 }
 </style>
