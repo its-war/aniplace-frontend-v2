@@ -1,10 +1,17 @@
 <script setup>
 import { RouterView } from 'vue-router'
+import {useDisplay} from "vuetify"
+import mainStore from "@/stores/mainStore"
+const main = mainStore();
+main.setMobile(useDisplay().mobile.value);
 </script>
 
 <template>
   <v-app>
-    <RouterView />
+    <v-overlay :model-value="main.isLoading" class="align-center justify-center">
+      <v-progress-circular style="margin: auto" color="red" indeterminate :size="main.isMobile?40:80"></v-progress-circular>
+    </v-overlay>
+    <RouterView/>
   </v-app>
 </template>
 

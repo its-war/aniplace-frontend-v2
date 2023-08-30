@@ -1,11 +1,13 @@
 <template>
-  <CarouselComponent/>
-  <v-main>
-    <SliderComponent slide-nome="Lançamentos desta semana" :anime-list="animes"/>
-    <SliderComponent slide-nome="Top animes" :anime-list="animes"/>
-    <SliderComponent slide-nome="Mais vistos desse mês" :anime-list="animes"/>
-    <SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/>
-  </v-main>
+  <div>
+    <CarouselComponent/>
+    <v-main>
+      <SliderComponent slide-nome="Lançamentos desta semana" :anime-list="animes"/>
+      <SliderComponent slide-nome="Top animes" :anime-list="animes" :show-episodios="false"/>
+      <SliderComponent slide-nome="Mais vistos desse mês" :anime-list="animes"/>
+      <SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/>
+    </v-main>
+  </div>
 </template>
 
 <script>

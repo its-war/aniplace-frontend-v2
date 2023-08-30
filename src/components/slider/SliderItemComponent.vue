@@ -1,12 +1,12 @@
 <template>
   <v-slide-group-item>
-    <div class="item">
-      <div class="item-numero">
-        <span>Episódio {{$props.numero}}</span>
+    <div class="item" :style="isMobile?'height: 100px !important; margin: 9px 3px;':''">
+      <div class="item-numero" :style="isMobile?'font-size: 13px;':''">
+        <span v-if="$props.numero > 0">Episódio {{$props.numero}}</span>
       </div>
       <img :src="$props.foto" :alt="$props.nome" style="height: 100%"/>
-      <div class="item-nome">
-        <h4>{{$props.nome}}</h4>
+      <div class="item-nome" :style="isMobile?'font-size: 11px;':''">
+        <h4>{{$limitarTexto($props.nome, 18)}}</h4>
       </div>
     </div>
   </v-slide-group-item>
@@ -31,6 +31,11 @@ export default {
     numero: {
       type: Number,
       required: true
+    }
+  },
+  computed: {
+    isMobile(){
+      return this.$vuetify.display.mobile;
     }
   }
 }
