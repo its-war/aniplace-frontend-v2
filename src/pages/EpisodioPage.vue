@@ -1,8 +1,8 @@
 <template>
-  <v-main class="main-episodio">
+  <v-main :style='isMobile ? `grid-template-areas: "title title title" "content content content";` : ``' class="main-episodio">
     <div class="anime-title">
-      <h2 v-if="episodio.temporada === 1 && episodio.anime.nome">{{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}</h2>
-      <h2 v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}</h2>
+      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada === 1 && episodio.anime.nome">{{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}</h2>
+      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}</h2>
       <v-progress-linear v-show="loadingPage" color="info" :indeterminate="true"></v-progress-linear>
     </div>
     <section class="player-section">
@@ -18,15 +18,15 @@
         </div>
       </vue-plyr>
       <article style="margin-bottom: 10px; text-align: center">
-        <v-btn @click="anterior" :disabled="disabledAnterior" size="small" color="#457BE4" prepend-icon="mdi-chevron-left">Anterior</v-btn>
-        <v-btn @click="goBackAnimeList" size="small" color="#3C669C" prepend-icon="mdi-view-list" text="Lista Completa" style="margin-left: 5px"></v-btn>
-        <v-btn @click="proximo" :disabled="disabledProximo" size="small" color="#457BE4" append-icon="mdi-chevron-right" style="margin-left: 5px">Próximo</v-btn>
-        <v-btn @click="reportar" size="small" color="#c30000" prepend-icon="mdi-alert" style="margin-left: 5px">Reportar Erro</v-btn>
+        <v-btn @click="anterior" :disabled="disabledAnterior" :text="!isMobile?'Anterior':''" size="small" color="#457BE4" :icon="isMobile?'mdi-chevron-left':false" prepend-icon="mdi-chevron-left"></v-btn>
+        <v-btn @click="goBackAnimeList" :text="!isMobile?'Lista de Episódios':''" size="small" color="#3C669C" :icon="isMobile?'mdi-view-list':false" prepend-icon="mdi-view-list" style="margin-left: 5px"></v-btn>
+        <v-btn @click="proximo" :disabled="disabledProximo" :text="!isMobile?'Próximo':''" size="small" color="#457BE4" :icon="isMobile?'mdi-chevron-right':false" append-icon="mdi-chevron-right" style="margin-left: 5px"></v-btn>
+        <v-btn @click="reportar" :loading="reportLoading" :text="!isMobile?'Reportar Erro':''" size="small" color="#c30000" :icon="isMobile?'mdi-alert':false" prepend-icon="mdi-alert" style="margin-left: 5px"></v-btn>
       </article>
     </section>
-    <aside class="more-episodios">
+    <aside v-if="!isMobile" class="more-episodios">
       <v-tabs v-model="temporadaTab" align-tabs="center" color="#1E90FFFF" :center-active="true">
-        <v-tab v-for="(temporada, i) in episodio.temporadas" :key="i" :size="isMobile?'x-small':'default'" :value="temporada.numeroTemporada">
+        <v-tab v-for="(temporada, i) in episodio.temporadas" :key="i" :size="isMobile?'x-small':'small'" :value="temporada.numeroTemporada">
           {{ temporada.numeroTemporada }}ª Temporada
         </v-tab>
       </v-tabs>
@@ -54,6 +54,18 @@
         </v-window-item>
       </v-window>
     </aside>
+    <v-snackbar v-model="reportSnackbar" theme="light">
+      Episódio reportado com sucesso.
+      <template v-slot:actions>
+        <v-btn
+            color="pink"
+            variant="text"
+            @click="reportSnackbar = false"
+        >
+          Fechar
+        </v-btn>
+      </template>
+    </v-snackbar>
   </v-main>
 </template>
 
@@ -80,7 +92,8 @@ export default {
           if(response.data.episodio){
             this.episodio = response.data.episodio;
             this.$socket.emit('acessoAnime', this.episodio.anime.idAnime);
-            console.log(this.episodio);
+            this.$socket.emit('acessoEpisodio', this.episodio.idEpisodio);
+            document.title = this.episodio.anime.nome + ' - ' + this.$route.params.temporada + 'ª Temporada, episódio ' + this.$route.params.numero + ' — Aniplace';
           }
         }).finally(() => {
           this.loadingPage = false;
@@ -134,13 +147,16 @@ export default {
       }
     },
     reportar(){
+      this.reportLoading = true;
       this.axios.post('report/inserir', {
         idAnime: this.episodio.anime.idAnime,
         idEpisodio: this.episodio.idEpisodio
       }).then((response) => {
         if(response.data.report){
-          alert(response.data.report);
+          this.reportSnackbar = true;
         }
+      }).finally(() => {
+        this.reportLoading = false;
       });
     },
     scrollEpisodio(){
@@ -167,7 +183,9 @@ export default {
     },
     player: null,
     temporadaTab: null,
-    loadingPage: true
+    loadingPage: true,
+    reportSnackbar: false,
+    reportLoading: false
   }),
   computed: {
     isMobile(){

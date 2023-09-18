@@ -1,6 +1,6 @@
 <template>
   <v-app-bar id="appbar" style="transition: 300ms;" :class="!isMobile?'appbar-transparent':''" elevation="0">
-    <v-app-bar-nav-icon @click.stop="menuMobile = !menuMobile"  v-show="isMobile"/>
+    <v-app-bar-nav-icon @click.stop="menuMobile = !menuMobile"  v-show="isMobile || isAdmin"/>
     <v-toolbar-title @click="goRoute('Home')">
       <div class="d-flex" style="align-items: center">
         <img :src="getImg" alt="Logo" style="width: 70px; cursor: pointer"/>
@@ -10,7 +10,8 @@
     <template v-slot:append>
       <v-btn tag="a" v-show="!isMobile" @click="goRoute('Home')">Home</v-btn>
       <v-btn tag="a" v-show="!isMobile" @click="goRoute('Animes', {pagina: 1})">Animes</v-btn>
-      <v-btn tag="a" v-show="!isMobile" @click="goRoute('Feed')">Feed</v-btn>
+      <v-btn v-show="false" tag="a" @click="goRoute('Feed')">Feed</v-btn><!-- v-show="!isMobile" -->
+      <v-btn v-if="isAdmin" tag="a" @click="goRoute('Admin Home')">Admin</v-btn><!-- v-show="!isMobile" -->
       <v-btn icon tag="a" v-show="!isMobile">
         <v-avatar v-if="isLogged && $store.user.getFoto" :image="$getImg($store.user.getFoto, 'user/foto')"></v-avatar>
         <v-icon v-else icon="mdi-account"/>
@@ -55,22 +56,87 @@
             <span style="font-size: 9px" v-if="anime.audio === 2">Legendado</span>
             <span style="font-size: 9px" v-if="anime.audio === 3">Dublado</span>
             <div>
-              <span style="display: inline-block; font-size: 9px; background-color: #c30000; color: white; border-radius: 3px; padding: 1px 2px; margin: 1px 2px 0 0" v-for="(genero, g) in anime.generos" :key="g">{{genero.nome}}</span>
+              <div v-for="(genero, g) in anime.generos" :key="g" style="display: inline-block">
+                <span v-if="g <= 4" style="display: inline-block; font-size: 9px; background-color: #c30000; color: white; border-radius: 3px; padding: 1px 2px; margin: 1px 2px 0 0">{{genero.nome}}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
   </v-card>
-  <v-navigation-drawer v-model="menuMobile" class="drawer-mobile">
-    <div class="btn-group">
-      <v-btn class="btn-menu" tag="a" variant="tonal" @click="goRoute('Home')">Home</v-btn>
-      <v-btn class="btn-menu" tag="a" variant="tonal" @click="goRoute('Animes', {pagina: 1})">Animes</v-btn>
-      <v-btn class="btn-menu" tag="a" variant="tonal" @click="goRoute('Feed')">Feed</v-btn>
-    </div>
+  <v-navigation-drawer v-model="activeDrawer" :rail="onAdminPage" :expand-on-hover="onAdminPage" class="drawer-mobile">
+
+    <template v-slot:prepend>
+      <v-list density="compact">
+        <v-list-group value="avatar">
+          <template v-slot:activator="{props}">
+            <v-list-item
+                v-if="isLogged"
+                v-bind="props"
+                lines="two"
+                :prepend-avatar="$store.user.getFoto ? $getImg($store.user.getFoto, 'user/foto') : null"
+                :prepend-icon="$store.user.getFoto ? null : $getImg($store.user.getFoto, 'user/foto')"
+                :title="$store.user.getPrimeiroNome"
+                subtitle="Online"
+            ></v-list-item>
+
+            <v-list-item
+                v-else
+                v-bind="props"
+                lines="one"
+                title="Conta"
+            ></v-list-item>
+          </template>
+
+          <v-list-item v-if="isLogged" @click="logout" prepend-icon="mdi-location-exit" title="Sair" value="sair"></v-list-item>
+
+          <v-list-item v-if="!isLogged" @click="goRoute('Login')" prepend-icon="mdi-login" title="Login" value="login"></v-list-item>
+          <v-list-item v-if="!isLogged" @click="goRoute('Cadastro')" prepend-icon="mdi-account-plus" title="Cadastro" value="cadastro"></v-list-item>
+        </v-list-group>
+      </v-list>
+    </template>
+
+    <v-divider></v-divider>
+
+    <v-list density="compact" :nav="true">
+      <v-list-item @click="goRoute('Home')" prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
+      <v-list-item @click="goRoute('Animes', {pagina: 1})" prepend-icon="mdi-animation-play" title="Animes" value="animes"></v-list-item>
+      <v-list-item v-if="false" prepend-icon="mdi-note-text" title="Feed" value="feed"></v-list-item>
+
+      <v-list-group value="Admin" v-if="isAdmin">
+        <template v-slot:activator="{props}">
+          <v-list-item prepend-icon="mdi-security" title="Admin" value="admin" v-bind="props"></v-list-item>
+        </template>
+
+        <v-list-item @click="goRoute('Admin Home')" prepend-icon="mdi-security-network" title="Admin Home" value="admin"></v-list-item>
+        <v-list-item prepend-icon="mdi-account-multiple" title="Usuários" value="usuarios"></v-list-item>
+        <v-list-item prepend-icon="mdi-alert" title="Reportes" value="reportes"></v-list-item>
+
+        <v-list-group value="AdminAnime">
+          <template v-slot:activator="{props}">
+            <v-list-item v-bind="props" prepend-icon="mdi-animation-play" title="Animes" value="admin-animes"></v-list-item>
+          </template>
+
+          <v-list-item @click="goRoute('Cadastrar Anime')" title="Cadastrar" value="cadastrar-animes"></v-list-item>
+          <v-list-item title="Listar" value="listar-animes"></v-list-item>
+          <v-list-item @click="goRoute('Selecionar Anime')" title="Add. Episódio" value="cadastrar-episodios"></v-list-item>
+
+          <v-list-group value="AdminAnimeEditar">
+            <template v-slot:activator="{props}">
+              <v-list-item v-bind="props" title="Editar" value="admin-animes"></v-list-item>
+            </template>
+
+            <v-list-item title="Anime" value="editar-anime"></v-list-item>
+            <v-list-item @click="goRoute('Editar Episódio')" title="Episódio" value="editar-episodio"></v-list-item>
+          </v-list-group>
+        </v-list-group>
+      </v-list-group>
+    </v-list>
     <v-text-field class="btn-menu" placeholder="Pesquisar..."
                   :append-inner-icon="mobileSearch.length > 0 ? 'mdi-redo' : 'mdi-magnify'"
                   variant="outlined"
+                  v-if="isMobile"
                   density="compact"
                   color="red"
                   v-model="mobileSearch"
@@ -109,6 +175,28 @@ export default {
     },
     isMobile(){
       return this.$store.main.isMobile;
+    },
+    activeDrawer(){
+      if(this.isLogged){
+        if(this.isAdmin){
+          let rota = this.$route.path.split('/')[1];
+          if(rota === 'admin'){
+            return true;
+          }else{
+            return this.menuMobile;
+          }
+        }else{
+          return this.menuMobile;
+        }
+      }else{
+        return this.menuMobile;
+      }
+    },
+    isAdmin(){
+      return this.isLogged && this.$store.user.getRanking > 5;
+    },
+    onAdminPage(){
+      return this.$route.path.split('/')[1] === 'admin';
     }
   },
   data: () => ({
@@ -125,6 +213,10 @@ export default {
       this.pesquisa.painel = false;
       this.pesquisa.resultado = [];
       this.$router.push({name: nomeRota, params: params});
+      if(this.isMobile){
+        this.menuMobile = false;
+      }
+      this.menuMobile = false;
     },
     pesquisar(){
       if(this.pesquisa.text.length >= 3){
@@ -157,6 +249,9 @@ export default {
           this.$store.user.setUserdata(response.data.userBasicData);
           localStorage.setItem('userdata', '');
           localStorage.setItem('router-verify-data', '');
+          if(this.$route.path.split('/')[1] === 'admin'){
+            this.$router.push({name: 'Home'});
+          }
         }
       });
     }
@@ -188,6 +283,7 @@ export default {
   height: 140px;
   display: flex;
   transition: 250ms ease-in-out;
+  cursor: pointer;
 }
 
 .anime-search:hover {

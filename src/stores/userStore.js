@@ -12,6 +12,9 @@ export default defineStore('user', {
         getIdUser: (state) => {
             return state.idUser;
         },
+        getPrimeiroNome: (state) => {
+            return state.nome.split(' ')[0];
+        },
         getNome: (state) => {
             return state.nome;
         },

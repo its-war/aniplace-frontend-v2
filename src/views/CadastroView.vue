@@ -108,7 +108,6 @@ export default {
             localStorage.setItem('router-verify-data', value.data.tokenRouterVerify);
             this.$router.push({name: 'Home'});
           }else{
-            console.log(value.data);
             alert('Não foi possível cadastrar.');
           }
         }).finally(() => {

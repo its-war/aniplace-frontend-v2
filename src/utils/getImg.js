@@ -1,3 +1,6 @@
+import config from "../../config";
+
 export default function getImg(img, contexto){
-    return 'http://192.168.0.22:8080/img/' + contexto + '/' + img;
+    const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
+    return apiUrl + '/img/' + contexto + '/' + img;
 }

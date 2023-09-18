@@ -1,10 +1,12 @@
 <template>
   <v-slide-group-item>
-    <div class="item" :style="isMobile?'height: 100px !important; margin: 9px 3px;':''">
+    <div @click="clickEvent" class="item" :style="isMobile?'height: 100px !important; margin: 9px 3px;':''">
       <div class="item-numero" :style="isMobile?'font-size: 13px;':''">
-        <span v-if="$props.numero > 0">Episódio {{$props.numero}}</span>
+        <span v-if="$props.numero > 0 && $props.temporada">{{$props.temporada}}ª Temporada, Ep. {{$props.numero}}</span>
+        <span v-if="$props.numero > 0 && $props.temporada === null">Episódio {{$props.numero}}</span>
+        <span v-if="$props.showNota"><v-icon icon="mdi-star" color="yellow"/>{{parseFloat($props.nota).toFixed(2)}}</span>
       </div>
-      <img :src="$props.foto" :alt="$props.nome" style="height: 100%"/>
+      <img :src="$getImg($props.foto, 'anime/capa')" :alt="$props.nome" style="height: 100%"/>
       <div class="item-nome" :style="isMobile?'font-size: 11px;':''">
         <h4>{{$limitarTexto($props.nome, 18)}}</h4>
       </div>
@@ -17,7 +19,7 @@ export default {
   name: "SliderItemComponent",
   props: {
     id: {
-      type: String,
+      type: Number,
       required: true
     },
     nome: {
@@ -31,11 +33,43 @@ export default {
     numero: {
       type: Number,
       required: true
+    },
+    temporada: {
+      type: Number,
+      default: null
+    },
+    isAnime: {
+      type: Boolean,
+      default: false
+    },
+    showNota: {
+      type: Boolean,
+      default: false
+    },
+    nota: {
+      type: String,
+      default: null
     }
   },
   computed: {
     isMobile(){
       return this.$vuetify.display.mobile;
+    }
+  },
+  methods: {
+    clickEvent(){
+      if(this.$props.isAnime){
+        this.$router.push({name: 'Anime', params: {id: this.$props.id}});
+      }else{
+        this.$router.push({
+          name: 'Episódio',
+          params: {
+            idAnime: this.$props.id,
+            temporada: this.$props.temporada ?? 1,
+            numero: this.$props.numero
+          }
+        });
+      }
     }
   }
 }

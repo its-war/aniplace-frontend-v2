@@ -21,7 +21,7 @@
                   <v-icon icon="mdi-high-definition-box" v-bind="props"></v-icon>
                 </template>
               </v-tooltip>
-              <v-tooltip text="Legenda em português brasileiro disponível" location="top" theme="light">
+              <v-tooltip text="Legenda português brasileiro" location="top" theme="light">
                 <template v-slot:activator="{props}">
                   <v-icon v-show="anime.audio === 1 || anime.audio === 2" icon="mdi-closed-caption" v-bind="props"></v-icon>
                 </template>
@@ -32,7 +32,12 @@
                 </template>
               </v-tooltip>
               {{anime.ano}}
-              <span><v-icon icon="mdi-star" color="yellow" style="margin-right: 0 !important;"></v-icon>9,78</span>
+              <v-tooltip :text="totalVotos ? `Total de Votos: ${totalVotos}` : `Total de Votos: 0`" theme="light" location="top">
+                <template v-slot:activator="{props}">
+                  <span v-bind="props" v-if="animeNota"><v-icon icon="mdi-star" color="yellow" style="margin-right: 0 !important;"></v-icon>{{getAnimeNota}}</span>
+                  <span v-bind="props" v-else><v-icon icon="mdi-star" color="yellow" style="margin-right: 0 !important;"></v-icon>—</span>
+                </template>
+              </v-tooltip>
               <v-tooltip text="Site oficial do anime" location="top" theme="light">
                 <template v-slot:activator="{props}">
                   <v-icon v-show="anime.site" icon="mdi-web" v-bind="props"></v-icon>
@@ -44,8 +49,26 @@
               </template>
             </v-tooltip>
             </span>
+            <div class="anime-votos" v-if="userIsLogged" style="padding-top: 5px" :style="!isMobile? 'width: 250px' : ''">
+              <v-select
+                  label="Sua nota"
+                  color="info"
+                  density="compact"
+                  :loading="notaLoading"
+                  v-model="userNota"
+                  :items="notas"
+                  item-title="text"
+                  item-value="nota"
+                  variant="solo-filled"
+                  v-on:update:modelValue="mudarVoto"
+              >
+                <template v-slot:prepend-inner>
+                  <v-icon icon="mdi-star" color="yellow"/>
+                </template>
+              </v-select>
+            </div>
 
-            <div v-if="!isMobile" class="sinopse" style="overflow: auto; max-height: 80%; width: 50%; margin-top: 10px">
+            <div v-if="!isMobile" class="sinopse" style="overflow: auto; max-height: 70%; width: 50%">
               <p v-for="(paragrafo, i) in anime.sinopse" :key="i" style="margin-bottom: 10px; text-indent: 3em; font-size: 12px" :style="isTablet ? 'padding-right: 10px; font-size: 5px !important;' : ''">
                 {{ paragrafo }}
               </p>
@@ -95,9 +118,9 @@
                 <td style="text-align: center" :style="isMobile?'font-size: 10px':''">Episódio {{episodio.numero}}</td>
                 <td style="text-align: center"><v-btn @click="assistir(i + 1, j + 1)" :size="isMobile?'x-small':'default'" prepend-icon="mdi-play" color="secondary" variant="tonal">Assistir</v-btn></td>
                 <td style="text-align: center">
-                  <v-btn :size="isMobile?'x-small':'default'" prepend-icon="mdi-download" color="red" variant="tonal">
+                  <v-btn @click="baixar(episodio.link1080p)" :size="isMobile?'x-small':'default'" prepend-icon="mdi-download" color="red" variant="tonal">
                     Baixar
-                    <v-menu activator="parent">
+                    <!--v-menu activator="parent">
                       <v-list>
                         <v-list-item @click="baixar(episodio.link1080p)">
                           <v-list-item-title>Full HD (1080p)</v-list-item-title>
@@ -106,7 +129,7 @@
                           <v-list-item-title>HD (720p)</v-list-item-title>
                         </v-list-item>
                       </v-list>
-                    </v-menu>
+                    </v-menu-->
                   </v-btn>
                 </td>
               </tr>
@@ -180,6 +203,12 @@ export default {
         return this.$getImg(this.anime.prints[this.imgSelectedIndex], 'anime/print');
       }
       return null;
+    },
+    userIsLogged(){
+      return this.$store.main.isLogged;
+    },
+    getAnimeNota(){
+      return parseFloat(this.animeNota).toFixed(2);
     }
   },
   data: () => ({
@@ -208,12 +237,35 @@ export default {
     },
     temporadaTab: null,
     imgPrintDialog: false,
-    imgSelectedIndex: null
+    imgSelectedIndex: null,
+    userNota: null,
+    notas: [
+      {text: '1 - Terrível', nota: 1},
+      {text: '2 - Horrível', nota: 2},
+      {text: '3 - Muito Ruim', nota: 3},
+      {text: '4 - Ruim', nota: 4},
+      {text: '5 - Mediano', nota: 5},
+      {text: '6 - Ok', nota: 6},
+      {text: '7 - Bom', nota: 7},
+      {text: '8 - Muito Bom', nota: 8},
+      {text: '9 - Ótimo', nota: 9},
+      {text: '10 - Obra-prima', nota: 10},
+    ],
+    notaLoading: false,
+    animeNota: null,
+    totalVotos: 0
   }),
   mounted() {
+    this.carregarAnimeNota();
+
+    this.axios.get('rating/getVoto?idAnime=' + this.$route.params.id).then((response) => {
+      this.userNota = response.data.nota;
+    });
+
     this.axios.get('anime/listar?id=' + this.$route.params.id).then((value) => {
       this.anime = value.data[0];
       this.$socket.emit('acessoAnime', value.data[0].idAnime);
+      document.title = this.anime.nome + ' — Aniplace';
     });
   },
   methods: {
@@ -242,7 +294,27 @@ export default {
       this.$router.push({name: 'Episódio', params: {idAnime: this.anime.idAnime, temporada: temporada, numero: episodio}});
     },
     baixar(link){
-      console.log(link);
+      link = link.split('/d/')[1];
+      link = link.split('/')[0];
+      link = 'https://drive.google.com/uc?id=' + link + '&export=download';
+      window.open(link, '_blank');
+    },
+    mudarVoto(){
+      this.notaLoading = true;
+      this.axios.post('rating/votar', {idAnime: this.anime.idAnime, nota: this.userNota}).then((response) => {
+        if(!response.data.voto){
+          alert('Erro ao efetuar nota. Tente de novo mais tarde.');
+        }
+        this.carregarAnimeNota();
+      }).finally(() => {
+        this.notaLoading = false;
+      });
+    },
+    carregarAnimeNota(){
+      this.axios.get('rating/getAnimeNota?idAnime=' + this.$route.params.id).then((response) => {
+        this.animeNota = response.data.nota;
+        this.totalVotos = response.data.totalVotos;
+      });
     }
   }
 }

@@ -2,10 +2,12 @@
   <div>
     <CarouselComponent/>
     <v-main>
-      <SliderComponent slide-nome="Lançamentos desta semana" :anime-list="animes"/>
-      <SliderComponent slide-nome="Top animes" :anime-list="animes" :show-episodios="false"/>
-      <SliderComponent slide-nome="Mais vistos desse mês" :anime-list="animes"/>
-      <SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/>
+      <SliderComponent v-if="ultimos7Dias.length > 0" slide-nome="Lançamentos desta semana" :anime-list="ultimos7Dias"/>
+      <SliderComponent v-if="maisAcessados.length > 0" slide-nome="Animes em alta" :anime-list="maisAcessados" :is-anime="true" :show-episodios="false"/>
+      <SliderComponent v-if="maisVistos.length > 0" slide-nome="Episódios em alta" :anime-list="maisVistos"/>
+      <SliderComponent v-if="topAnimes.length > 0" slide-nome="Top animes" :anime-list="topAnimes" :show-episodios="false" :is-anime="true" :show-nota="true"/>
+      <!--SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/-->
+      <!-- TODO: iniciar a criação de um algoritmo de automação para alimentar esses sliders -->
     </v-main>
   </div>
 </template>
@@ -18,159 +20,47 @@ export default {
   name: "HomeBodyComponent",
   components: {CarouselComponent, SliderComponent},
   data: () => ({
-    animes: [
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Darling in The FranXX',
-        foto: 'https://i.ytimg.com/vi/dnFXikH6o8U/maxresdefault.jpg',
-        numero: 5
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      },
-      {
-        id: 'fghgfhgh4f5ghfghf4gh',
-        nome: 'Zero no Tsukaima',
-        foto: 'https://www.animenewsnetwork.com/hotlink/thumbnails/crop1200x630g80/cms/news/111809/zeronotsukaima22.jpg',
-        numero: 11
-      }
-    ]
+    maisVistos: [],
+    maisAcessados: [],
+    ultimos7Dias: [],
+    topAnimes: []
   }),
+  methods: {
+    carregarTudo(){
+      this.carregarMaisVistos();
+      this.carregarAnimesMaisAcessados();
+      this.carregarUltimos7Dias();
+      this.carregarTopAnimes();
+    },
+    carregarMaisVistos(){
+      this.axios.get('episodio/getMaisVistos').then((response) => {
+        this.maisVistos = response.data.episodios;
+      });
+    },
+    carregarAnimesMaisAcessados(){
+      this.axios.get('anime/getMaisAcessados').then((response) => {
+        this.maisAcessados = response.data.animes;
+      });
+    },
+    carregarUltimos7Dias(){
+      this.axios.get('episodio/getUltimos7Dias').then((response) => {
+        this.ultimos7Dias = response.data.episodios;
+      });
+    },
+    carregarTopAnimes(){
+      this.axios.get('anime/getTopAnimes').then((response) => {
+        this.topAnimes = response.data.animes;
+      });
+    }
+  },
+  mounted() {
+    this.carregarTudo();
+  },
+  computed: {
+    showMaisVistos(){
+      return this.maisVistos.length > 0;
+    }
+  }
 }
 </script>
 

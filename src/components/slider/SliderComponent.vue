@@ -8,10 +8,21 @@
     <v-btn v-if="isMobile" size="x-small" variant="outlined" style="position: absolute; top: 0; right: 50px">Ver todos</v-btn>
     <v-btn v-else variant="outlined" style="position: absolute; top: 0; right: 50px">Ver todos</v-btn>
 
-    <v-slide-group v-model="slider" show-arrows>
+    <v-slide-group v-model="slider" show-arrows v-if="$props.isAnime">
       <SliderItemComponent
-          v-for="(anime, i) in $props.animeList" :key="i"
-          :id="anime.id" :nome="anime.nome" :foto="anime.foto" :numero="$props.showEpisodios ? anime.numero : 0"
+          v-for="(anime, i) in $props.animeList" :key="i" :is-anime="$props.isAnime"
+          :id="anime.idAnime" :temporada="anime.temporada > 1 ? anime.temporada : null"
+          :nome="anime.nome" :foto="anime.capa" :numero="$props.showEpisodios ? anime.numero : 0"
+          :show-nota="$props.showNota"
+          :nota="$props.showNota ? anime.weighted_average : null"
+      />
+    </v-slide-group>
+
+    <v-slide-group v-model="slider" show-arrows v-else>
+      <SliderItemComponent
+          v-for="(episodio, i) in $props.animeList" :key="i" :is-anime="$props.isAnime"
+          :id="episodio.anime.idAnime" :temporada="episodio.temporada > 1 ? episodio.temporada : null"
+          :nome="episodio.anime.nome" :foto="episodio.anime.capa" :numero="$props.showEpisodios ? episodio.numero : 0"
       />
     </v-slide-group>
   </div>
@@ -37,6 +48,14 @@ export default {
     showEpisodios: {
       type: Boolean,
       default: true
+    },
+    isAnime: {
+      type: Boolean,
+      default: false
+    },
+    showNota: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

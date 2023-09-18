@@ -8,6 +8,9 @@ import VueAxios from 'vue-axios'
 import { io } from 'socket.io-client'
 import VuePlyr from 'vue-plyr'
 import 'vue-plyr/dist/vue-plyr.css'
+import config from '../config';
+
+const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
 
 import limitarTexto from "@/utils/limitarTexto";
 import getImg from "@/utils/getImg";
@@ -36,7 +39,7 @@ const vuetify = createVuetify({
 
 const app = createApp(App)
 
-const axiosInstance = axios.create({baseURL: 'http://192.168.0.22:8080/api', withCredentials: true});
+const axiosInstance = axios.create({baseURL: apiUrl + '/api', withCredentials: true});
 axiosInstance.interceptors.response.use(response => {
         return response;
     },
@@ -169,7 +172,7 @@ const store = {
 app.config.globalProperties.$store = store;
 app.config.globalProperties.$limitarTexto = limitarTexto
 app.config.globalProperties.$getImg = getImg
-app.config.globalProperties.$socket = io('http://192.168.0.22:8080')
+app.config.globalProperties.$socket = io(apiUrl)
 
 app.mount('#app')
 

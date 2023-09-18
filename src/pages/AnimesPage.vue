@@ -357,7 +357,6 @@ export default {
     },
     getAnimeHeight(){
       let height = 1280 * this.getAnimeWidth / 900;
-      console.log(this.getAnimeWidth, height);
       return height;
     },
     getAnimes(){
