@@ -38,15 +38,16 @@
                       density="compact"
                       v-model="pesquisa.text"
                       @keyup="pesquisar"
+                      @focus="pesquisa.resultado.length > 0 ? pesquisa.painel = true : false"
                       v-on:keydown.enter="search(pesquisa.text)"></v-text-field>
         <v-card v-show="pesquisa.painel" style="position: absolute; top: 60px; right: 10px; z-index: 100" width="300px" height="400px">
-          <div v-if="pesquisa.resultado.length > 0">
+          <div v-if="pesquisa.resultado.length > 0" class="search-result-box">
             <div class="anime-search" v-for="(anime, i) in pesquisa.resultado" :key="i" @click="goRoute('Anime', {id: anime.idAnime})">
               <div class="anime-img">
                 <img :src="$getImg(anime.foto, 'anime/foto')" alt=""/>
               </div>
               <div class="anime-nome">
-                <span>{{anime.nome}}</span>
+                <span>{{$limitarTexto(anime.nome, 30)}}</span>
                 <div style="bottom: 0">
                   <span style="font-size: 9px">{{anime.ano}}</span>
                   <span style="font-size: 9px" v-if="anime.audio === 1">Dublado/Legendado</span>
@@ -54,11 +55,19 @@
                   <span style="font-size: 9px" v-if="anime.audio === 3">Dublado</span>
                   <div>
                     <div v-for="(genero, g) in anime.generos" :key="g" style="display: inline-block">
-                      <span v-if="g <= 4" style="display: inline-block; font-size: 9px; background-color: #c30000; color: white; border-radius: 3px; padding: 1px 2px; margin: 1px 2px 0 0">{{genero.nome}}</span>
+                      <span v-if="g <= 3" style="display: inline-block; font-size: 9px; background-color: #c30000; color: white; border-radius: 3px; padding: 1px 2px; margin: 1px 2px 0 0">{{genero.nome}}</span>
                     </div>
                   </div>
                 </div>
               </div>
+            </div>
+            <div v-if="pesquisa.resultado.length >= 15"
+                 @click="search(pesquisa.text)"
+                 class="anime-search"
+                 style="height: 50px">
+              <span style="margin: auto; text-decoration: underline">
+                Exibir todos os resultados
+              </span>
             </div>
           </div>
         </v-card>
@@ -346,5 +355,46 @@ export default {
 .appbar-transparent {
   /*background-color: rgb(18, 18, 18, .25) !important;*/
   background: linear-gradient( to bottom, rgba(0, 0, 0, 0.51) 0%, #00000005 100% ) !important;
+}
+
+.search-result-box {
+  overflow-y: auto;
+  height: 100%;
+}
+
+.search-result-box::-webkit-scrollbar {
+  width: 2px;
+}
+
+.search-result-box::-webkit-scrollbar-thumb {
+  background-color: dodgerblue;
+}
+
+.search-result-box::-webkit-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+.search-result-box::-ms-scrollbar {
+  width: 2px;
+}
+
+.search-result-box::-ms-scrollbar-thumb {
+  background-color: dodgerblue;
+}
+
+.search-result-box::-ms-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
+}
+
+.search-result-box::-moz-scrollbar {
+  width: 2px;
+}
+
+.search-result-box::-moz-scrollbar-thumb {
+  background-color: dodgerblue;
+}
+
+.search-result-box::-moz-scrollbar-track {
+  background-color: rgba(59, 59, 59, 0.5);
 }
 </style>
