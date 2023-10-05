@@ -85,7 +85,9 @@
                       v-on:click:appendInner="episodio.link = ''"
                       :loading="episodio.loading"></v-text-field>
 
-        <v-btn :disabled="episodio.link === episodio.copia" @click="atualizarEpisodio" :loading="loading" append-icon="mdi-send" variant="outlined" text="Atualizar Episódio" color="success"></v-btn>
+        <v-checkbox v-if="episodio.idEpisodio" v-model="episodio.ova" label="Marque essa caixa se o episódio for um OVA." color="red"/>
+
+        <v-btn :disabled="episodio.link === episodio.copia && episodio.ova === episodio.ovaCopia" @click="atualizarEpisodio" :loading="loading" append-icon="mdi-send" variant="outlined" text="Atualizar Episódio" color="success"></v-btn>
       </div>
     </div>
     <v-snackbar v-model="snackbar">
@@ -127,7 +129,9 @@ export default {
       link: '',
       numero: null,
       temporada: null,
-      copia: ''
+      copia: '',
+      ova: false,
+      ovaCopia: false
     },
     loading: false
   }),
@@ -214,19 +218,23 @@ export default {
         this.episodio.temporada = response.data.episodio.temporada;
         this.episodio.link = response.data.episodio.linkOnline;
         this.episodio.copia = response.data.episodio.linkOnline;
+        this.episodio.ova = response.data.episodio.ova;
+        this.episodio.ovaCopia = response.data.episodio.ova;
       }).finally(() => {
         this.episodio.loading = false;
       });
     },
     atualizarEpisodio(){
-      if(this.episodio.link !== this.episodio.copia && this.episodio.link.length > 0){
+      if(this.episodio.link !== this.episodio.copia && this.episodio.link.length > 0 || this.episodio.ova !== this.episodio.ovaCopia){
         this.loading = true;
         this.axios.post('admin/episodio/atualizar', {
           idEpisodio: this.episodio.idEpisodio,
-          link: this.episodio.link
+          link: this.episodio.link,
+          ova: this.episodio.ova
         }).then((response) => {
           if(response.data.update){
             this.episodio.copia = this.episodio.link;
+            this.episodio.ovaCopia = this.episodio.ova;
             this.snackbarText = 'Episódio atualizado com sucesso.';
           }else{
             this.snackbarText = 'Erro ao atualizar episódio.';

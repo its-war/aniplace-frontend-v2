@@ -1,7 +1,7 @@
 <template>
   <v-footer class="d-flex flex-column">
     <div class="px-4 py-2 text-center align-center w-100" :style="'width: ' + getWidthScreen + ' px !important;'">
-      <v-btn variant="text" tag="a" icon="mdi-instagram"></v-btn>
+      <v-btn variant="text" href="https://www.instagram.com/aniplace.top" target="_blank" tag="a" icon="mdi-instagram"></v-btn>
       <v-btn variant="text" tag="a" icon="mdi-facebook"></v-btn>
       <v-btn variant="text" tag="a" icon="mdi-github"></v-btn>
     </div>

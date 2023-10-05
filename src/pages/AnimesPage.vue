@@ -65,7 +65,12 @@
         </v-btn>
         <v-btn v-if="filtros.enabled || pesquisaSimples.enabled" :size="isMobile?'x-small':'default'" variant="tonal" append-icon="mdi-delete" @click="resetarBuscas">Limpar</v-btn>
       </div>
+
+      <!-- ### Animes no mobile ### -->
       <div v-if="isMobile" class="animes-main">
+        <div v-if="pageLoading" class="loading-animes" style="margin: auto; width: 50%; text-align: center">
+          <v-progress-circular indeterminate color="red" size="70"/>
+        </div>
         <div :style="{ width: getAnimeWidth }" class="anime-item" v-for="(anime, i) in getAnimes" :key="i">
           <img @click="goAnime(anime.idAnime)" :src="$getImg(anime.foto, 'anime/foto')" :alt="anime.nome"/>
           <v-tooltip :text="anime.nome" location="top">
@@ -75,7 +80,12 @@
           </v-tooltip>
         </div>
       </div>
+
+      <!-- ### Animes no desktop ### -->
       <div v-else class="animes-main">
+        <div v-if="pageLoading" class="loading-animes" style="margin: auto; width: 50%; text-align: center">
+          <v-progress-circular indeterminate color="red" size="70"/>
+        </div>
         <div :style="{ width: getAnimeWidth + 'px', height: getAnimeHeight + 'px' }" v-for="(anime, i) in getAnimes" :key="i" style="padding: 5px;">
           <div class="container noselect" @click="goAnime(anime.idAnime)">
             <div class="canvas">
@@ -186,7 +196,8 @@ export default {
       enabled: false,
       texto: ''
     },
-    searchLoading: false
+    searchLoading: false,
+    pageLoading: false
   }),
   methods: {
     clickLetra(numeroLetra){
@@ -221,11 +232,15 @@ export default {
       this.$router.push({name: 'Anime', params: {id: id}});
     },
     pullData(){
+      this.paginator.animes = [];
+      this.pageLoading = true;
       this.axios.get('anime/listar?pagina=' + this.paginator.pagina).then((value) => {
         if(value.data){
           this.paginator.animes = value.data.animes;
           this.paginator.total = value.data.total;
         }
+      }).finally(() => {
+        this.pageLoading = false;
       });
     },
     listarGeneros(){
@@ -286,11 +301,13 @@ export default {
       this.paginator.pagina = 1;
     },
     pesquisarPorTexto(){
-      this.axios.get('anime/pesquisa?texto=' + this.pesquisaSimples.texto + '&pagina=' + this.pesquisaSimples.pagina).then((value) => {
-        this.pesquisaSimples.animes = value.data.animes;
-        this.pesquisaSimples.total = value.data.total;
-        this.pesquisaSimples.enabled = true;
-      });
+      if(this.pesquisaSimples.texto.length){
+        this.axios.get('anime/pesquisa?texto=' + this.pesquisaSimples.texto + '&pagina=' + this.pesquisaSimples.pagina).then((value) => {
+          this.pesquisaSimples.animes = value.data.animes;
+          this.pesquisaSimples.total = value.data.total;
+          this.pesquisaSimples.enabled = true;
+        });
+      }
     }
   },
   mounted() {
@@ -322,9 +339,12 @@ export default {
       this.pesquisarPorTexto();
     },
     'pesquisaSimples.texto'(){
-      if(this.pesquisaSimples.texto.length > 0){
+      if(this.pesquisaSimples.texto){
         this.pesquisarPorTexto();
       }
+    },
+    '$route.query.text'(newValue){
+      this.pesquisaSimples.texto = newValue;
     }
   },
   computed: {
@@ -356,8 +376,7 @@ export default {
       }
     },
     getAnimeHeight(){
-      let height = 1280 * this.getAnimeWidth / 900;
-      return height;
+      return 1280 * this.getAnimeWidth / 900;
     },
     getAnimes(){
       if(this.filtros.enabled){

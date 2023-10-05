@@ -5,7 +5,10 @@ export default defineStore('main', {
         adblock: false,
         login: false,
         mobile: false,
-        loading: false
+        loading: false,
+        animeList: [],
+        totalPages: 1,
+        tituloVerTodos: ''
     }),
     getters: {
         getAdblockValue: (state) => {
@@ -19,6 +22,15 @@ export default defineStore('main', {
         },
         isLoading: (state) => {
             return state.loading;
+        },
+        getAnimeList: (state) => {
+            return state.animeList;
+        },
+        getTotalPages: (state) => {
+            return state.totalPages;
+        },
+        getTituloVerTodos: (state) => {
+            return state.tituloVerTodos;
         }
     },
     actions: {
@@ -47,6 +59,18 @@ export default defineStore('main', {
                     reject(err);
                 });
             });
+        },
+        setAdsOff(){
+            //
+        },
+        setAnimeList(animeList){
+            this.animeList = animeList;
+        },
+        setTotalPages(total){
+            this.totalPages = total;
+        },
+        setTituloVerTodos(titulo){
+            this.tituloVerTodos = titulo;
         }
     }
 });

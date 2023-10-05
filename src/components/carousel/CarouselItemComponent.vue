@@ -11,7 +11,7 @@
     <div class="sombra">
       <div class="sombra-2">
         <h1 v-if="!isTablet">{{$props.nome}}</h1>
-        <h3 v-else>{{$props.nome}}</h3>
+        <h3 v-else>{{$limitarTexto($props.nome, 45)}}</h3>
 
         <div v-if="isMobile" class="sinopse" style="overflow: auto; max-height: 80%; width: 70%; margin-top: 10px">
           <p v-for="(paragrafo, i) in sinopse" :key="i" style="margin-bottom: 10px; text-indent: 3em; font-size: 10px" :style="isTablet ? 'padding-right: 10px;' : ''">
@@ -71,6 +71,10 @@ export default {
     img: {
       type: String,
       required: true
+    },
+    idDestaque: {
+      type: Number,
+      default: 0
     }
   },
   methods: {

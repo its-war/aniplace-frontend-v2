@@ -13,6 +13,7 @@
                         :nome="anime.nome"
                         :img="anime.capa"
                         :sinopse="anime.sinopse"
+                        :id-destaque="anime.idDestaque ?? 0"
                     />
   </v-carousel>
 </template>

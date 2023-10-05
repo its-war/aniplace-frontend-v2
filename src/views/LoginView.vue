@@ -33,6 +33,13 @@
           Não possui uma conta? <a @click="goCadastro" href="/cadastro" style="color: #33b3f7">Cadastre-se</a>
         </p>
       </div>
+
+      <v-snackbar v-model="snackbar">
+        {{snackbarText}}
+        <template v-slot:actions>
+          <v-btn @click="snackbar = false" text="Ok" color="pink"/>
+        </template>
+      </v-snackbar>
     </div>
   </div>
 </template>
@@ -54,7 +61,9 @@ export default {
     },
     loading: true,
     erroCaptcha: false,
-    eye: false
+    eye: false,
+    snackbar: false,
+    snackbarText: ''
   }),
   methods: {
     goRoute(routeName){
@@ -96,7 +105,8 @@ export default {
             localStorage.setItem('router-verify-data', value.data.tokenRouterVerify);
             this.$router.push({name: 'Home'});
           }else{
-            alert('Não foi possivel fazer login.');
+            this.snackbarText = value.data.error;
+            this.snackbar = true;
           }
         }).finally(() => {
           this.loading = false;

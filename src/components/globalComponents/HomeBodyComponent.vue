@@ -2,10 +2,44 @@
   <div>
     <CarouselComponent/>
     <v-main>
-      <SliderComponent v-if="ultimos7Dias.length > 0" slide-nome="Lançamentos desta semana" :anime-list="ultimos7Dias"/>
-      <SliderComponent v-if="maisAcessados.length > 0" slide-nome="Animes em alta" :anime-list="maisAcessados" :is-anime="true" :show-episodios="false"/>
-      <SliderComponent v-if="maisVistos.length > 0" slide-nome="Episódios em alta" :anime-list="maisVistos"/>
-      <SliderComponent v-if="topAnimes.length > 0" slide-nome="Top animes" :anime-list="topAnimes" :show-episodios="false" :is-anime="true" :show-nota="true"/>
+      <SliderComponent v-if="ultimosLancamentos.list.length > 0"
+                       :anime-list="ultimosLancamentos.list"
+                       :total-pages="ultimosLancamentos.total"
+                       slide-nome="Lançamentos da semana"
+                       icon="mdi-new-box"
+                       icon-color="info"
+                       :show-ver-todos="true"
+      />
+
+      <SliderComponent v-if="maisAcessados.length > 0"
+                       slide-nome="Animes em alta"
+                       icon="mdi-fire"
+                       icon-color="orange"
+                       :anime-list="maisAcessados"
+                       :is-anime="true"
+                       :show-episodios="false"/>
+
+      <SliderComponent v-if="futurosLancamentos.length > 0"
+                       :is-anime="true"
+                       :show-episodios="false"
+                       icon="mdi-calendar-clock"
+                       :anime-list="futurosLancamentos"
+                       slide-nome="Futuros Lançamentos"/>
+
+      <SliderComponent v-if="topAnimes.length > 0"
+                       slide-nome="Top animes"
+                       icon="mdi-podium"
+                       icon-color="yellow"
+                       :anime-list="topAnimes"
+                       :show-episodios="false"
+                       :is-anime="true"
+                       :show-nota="true"/>
+
+      <SliderComponent v-if="ultimos7Dias.length > 0"
+                       slide-nome="Adicionados recentemente"
+                       icon="mdi-history"
+                       :anime-list="ultimos7Dias"/>
+
       <!--SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/-->
       <!-- TODO: iniciar a criação de um algoritmo de automação para alimentar esses sliders -->
     </v-main>
@@ -23,16 +57,23 @@ export default {
     maisVistos: [],
     maisAcessados: [],
     ultimos7Dias: [],
-    topAnimes: []
+    topAnimes: [],
+    ultimosLancamentos: {
+      list: [],
+      total: 1
+    },
+    futurosLancamentos: []
   }),
   methods: {
     carregarTudo(){
-      this.carregarMaisVistos();
+      this.carregarUltimosLancamentos();
       this.carregarAnimesMaisAcessados();
-      this.carregarUltimos7Dias();
+      this.carregarFuturosLancamentos();
       this.carregarTopAnimes();
+      this.carregarUltimos7Dias();
+      //this.carregarMaisVistos();
     },
-    carregarMaisVistos(){
+    carregarMaisVistos(){//não precisa mexer por enquanto
       this.axios.get('episodio/getMaisVistos').then((response) => {
         this.maisVistos = response.data.episodios;
       });
@@ -51,15 +92,21 @@ export default {
       this.axios.get('anime/getTopAnimes').then((response) => {
         this.topAnimes = response.data.animes;
       });
+    },
+    carregarUltimosLancamentos(){
+      this.axios.get('episodio/getLancamentos').then((response) => {
+        this.ultimosLancamentos.list = response.data.episodios;
+        this.ultimosLancamentos.total = response.data.total;
+      });
+    },
+    carregarFuturosLancamentos(){
+      this.axios.get('anime/getFuturosLancamentos').then((response) => {
+        this.futurosLancamentos = response.data.futurosLancamentos;
+      });
     }
   },
   mounted() {
     this.carregarTudo();
-  },
-  computed: {
-    showMaisVistos(){
-      return this.maisVistos.length > 0;
-    }
   }
 }
 </script>

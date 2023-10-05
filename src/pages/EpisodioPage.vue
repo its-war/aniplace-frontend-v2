@@ -1,8 +1,8 @@
 <template>
   <v-main :style='isMobile ? `grid-template-areas: "title title title" "content content content";` : ``' class="main-episodio">
     <div class="anime-title">
-      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada === 1 && episodio.anime.nome">{{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}</h2>
-      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}</h2>
+      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada === 1 && episodio.anime.nome">{{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
+      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
       <v-progress-linear v-show="loadingPage" color="info" :indeterminate="true"></v-progress-linear>
     </div>
     <section class="player-section">
@@ -22,6 +22,10 @@
         <v-btn @click="goBackAnimeList" :text="!isMobile?'Lista de Episódios':''" size="small" color="#3C669C" :icon="isMobile?'mdi-view-list':false" prepend-icon="mdi-view-list" style="margin-left: 5px"></v-btn>
         <v-btn @click="proximo" :disabled="disabledProximo" :text="!isMobile?'Próximo':''" size="small" color="#457BE4" :icon="isMobile?'mdi-chevron-right':false" append-icon="mdi-chevron-right" style="margin-left: 5px"></v-btn>
         <v-btn @click="reportar" :loading="reportLoading" :text="!isMobile?'Reportar Erro':''" size="small" color="#c30000" :icon="isMobile?'mdi-alert':false" prepend-icon="mdi-alert" style="margin-left: 5px"></v-btn>
+      </article>
+      <article><!-- TODO: sessão de comentarios -->
+        <ComentariosComponent v-if="episodio.idEpisodio" :tipo="1" :id-origem="episodio.idEpisodio"/>
+        <v-progress-linear v-else indeterminate size="70" color="info"/>
       </article>
     </section>
     <aside v-if="!isMobile" class="more-episodios">
@@ -49,6 +53,8 @@
             </div>
             <div class="episodio-title">
               Episódio {{getEpisodioNumero(numero)}}
+              <v-spacer/>
+              <ViewCountComponent :short="true" :views="temporada.acessos[numero - 1]"/>
             </div>
           </div>
         </v-window-item>
@@ -71,9 +77,12 @@
 
 <script>
 import {useDisplay} from "vuetify";
+import ViewCountComponent from "@/components/ViewCountComponent.vue";
+import ComentariosComponent from "@/components/comments/ComentariosComponent.vue";
 
 export default {
   name: "EpisodioPage",
+  components: { ComentariosComponent, ViewCountComponent },
   async mounted() {
     this.player = this.$refs.player.player;
     await this.carregarEpisodio();
@@ -174,6 +183,8 @@ export default {
       temporada: null,
       numero: null,
       linkOnline: null,
+      ova: false,
+      acessos: 0,
       anime: {
         idAnime: null,
         nome: null,
@@ -316,5 +327,6 @@ export default {
   align-items: center;
   display: flex;
   padding-left: 10px;
+  padding-right: 30px;
 }
 </style>

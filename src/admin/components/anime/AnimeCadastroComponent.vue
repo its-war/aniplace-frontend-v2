@@ -1,12 +1,15 @@
 <template>
   <div class="cadastro-container">
     <div class="campo-title">
-      <h1>Cadastrar Anime</h1>
+      <h1>Cadastrar Anime</h1><br/>
+      <h4>Os campos em <span style="color: rgb(0,110,250)">AZUL</span> são obrigatórios.</h4>
     </div>
     <div class="campo-nome">
       <v-text-field
           label="Nome"
           v-model="anime.nome"
+          base-color="info"
+          color="info"
           variant="outlined"
       />
     </div>
@@ -15,14 +18,16 @@
           label="Nome Alternativo"
           v-model="anime.nomeAlternativo"
           variant="outlined"
+          base-color="info"
+          color="info"
       />
     </div>
 
     <div class="campo-divider"><v-divider/></div>
 
     <div class="campo-generos">
-      <h4>Selecione os gêneros</h4>
-      <v-chip-group :multiple="true" v-model="anime.generos" selected-class="text-red">
+      <h4>Selecione os gêneros <span style="color: rgb(0,110,250); font-size: 30px">*</span></h4>
+      <v-chip-group :multiple="true" v-model="anime.generos" selected-class="text-blue">
         <v-chip :size="isMobile?'x-small':'default'" v-for="(genero, i) in generos" :key="i" :value="genero.idGenero">{{genero.nome}}</v-chip>
       </v-chip-group>
     </div>
@@ -35,6 +40,8 @@
                     accept="image/*"
                     v-on:click:clear="resetarFoto"
                     label="Foto do anime"
+                    base-color="info"
+                    color="info"
                     variant="outlined">
         <template v-slot:selection>
           {{$limitarTexto(img.foto[0].name, 25)}}
@@ -48,6 +55,8 @@
                     accept="image/*"
                     v-on:click:clear="resetarCapa"
                     label="Capa do anime"
+                    base-color="info"
+                    color="info"
                     variant="outlined">
         <template v-slot:selection>
           {{$limitarTexto(img.capa[0].name, 25)}}
@@ -69,6 +78,8 @@
                 :items="[{value: 1, title: 'Completo'}, {value: 2, title: 'Em Lançamento'}]"
                 item-value="value"
                 item-title="title"
+                base-color="info"
+                color="info"
                 variant="outlined"
                 v-model="anime.status"
       ></v-select>
@@ -78,6 +89,8 @@
                 label="Dia de lançamento"
                 :items="semana"
                 item-value="value"
+                base-color="info"
+                color="info"
                 item-title="title"
                 variant="outlined"
                 v-model="anime.dia"
@@ -86,6 +99,8 @@
     <div class="campo-ano">
       <v-select label="Ano de lançamento"
                 :items="anos"
+                base-color="info"
+                color="info"
                 variant="outlined"
                 v-model="anime.ano"
       ></v-select>
@@ -95,6 +110,8 @@
                 :items="[{value: 1, title: 'Todos'}, {value: 2, title: 'Online'}, {value: 3, title: 'Download'}]"
                 item-value="value"
                 item-title="title"
+                base-color="info"
+                color="info"
                 variant="outlined"
                 v-model="anime.disponibilidade"
       ></v-select>
@@ -123,6 +140,8 @@
       <v-textarea label="Escreva a sinopse"
                   variant="outlined"
                   :rows="7"
+                  base-color="info"
+                  color="info"
                   v-model="anime.sinopse"/>
       <h5 style="color: rgb(255,0,0)">* Separe os parágrafos por APENAS uma quebra de linha (enter).</h5>
     </div>

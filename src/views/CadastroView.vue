@@ -37,6 +37,13 @@
           Possui uma conta? <a @click="goLogin" href="/login" style="color: #33b3f7">Faça login</a>
         </p>
       </div>
+
+      <v-snackbar v-model="snackbar" color="red">
+        {{snackbarText}}
+        <template v-slot:actions>
+          <v-btn @click="snackbar = false" text="Ok"/>
+        </template>
+      </v-snackbar>
     </div>
   </div>
 </template>
@@ -60,7 +67,9 @@ export default {
     },
     loading: true,
     erroCaptcha: false,
-    eye: false
+    eye: false,
+    snackbar: false,
+    snackbarText: ''
   }),
   methods: {
     goRoute(routeName){
@@ -92,7 +101,7 @@ export default {
       }
     },
     doCadastro(){
-      if(this.cadastro.senha.length >= 8
+      if(this.cadastro.senha.length >= 1
           && this.cadastro.username.length > 0
           && this.cadastro.nome.length > 0
           && this.cadastro.email.length > 0
@@ -108,11 +117,30 @@ export default {
             localStorage.setItem('router-verify-data', value.data.tokenRouterVerify);
             this.$router.push({name: 'Home'});
           }else{
-            alert('Não foi possível cadastrar.');
+            if(typeof value.data.error === 'string'){
+              this.snackbarText = value.data.error;
+              this.snackbar = true;
+            }else{
+              if(value.data.error[0].path === 'username'){
+                this.snackbarText = value.data.error[0].msg;
+              }else if(value.data.error[0].path === 'email'){
+                this.snackbarText = value.data.error[0].msg;
+              }else if(value.data.error[0].path === 'nome'){
+                this.snackbarText = 'Não é permitido símbolos ou números no nome.';
+              }else if(value.data.error[0].path === 'senha'){
+                this.snackbarText = 'Senha deve conter pelo menos 8 (oito) dígitos.';
+              }else if(value.data.error[0].path === 'texto'){
+                this.snackbarText = 'Preencha o captcha.';
+              }
+              this.snackbar = true;
+            }
           }
         }).finally(() => {
           this.loading = false;
         });
+      }else{
+        this.snackbarText = 'Há campos vazios.';
+        this.snackbar = true;
       }
     },
     goLogin(e){

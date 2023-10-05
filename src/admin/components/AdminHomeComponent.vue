@@ -49,9 +49,10 @@
             <v-toolbar-title>Ultimos Animes</v-toolbar-title>
           </v-toolbar>
         </template>
-        <template v-slot:item.nome="{item}"><span :title="item.columns.nome">{{$limitarTexto(item.columns.nome, 22)}}</span></template>
+        <template v-slot:item.nome="{item}"><span @click="goAnime(item.columns.idAnime)" class="link-nome" :title="item.columns.nome">{{$limitarTexto(item.columns.nome, 22)}}</span></template>
         <template v-slot:item.dia="{item}">{{semana[item.columns.dia - 1]}}</template>
         <template v-slot:item.status="{item}">{{status[item.columns.status - 1]}}</template>
+        <template v-slot:item.acessos="{item}"><ViewCountComponent :views="item.columns.acessos" :short="true"/></template>
       </v-data-table>
 
       <v-data-table style="margin-top: 10px"
@@ -77,6 +78,7 @@
 
 <script>
 import {VDataTable} from 'vuetify/labs/VDataTable'
+import ViewCountComponent from "@/components/ViewCountComponent.vue";
 
 export default {
   name: "AdminHomeComponent",
@@ -135,17 +137,17 @@ export default {
         'Incompleto'
     ],
     rankings: [
-        'Novato',
-        'Membro',
-        'Usuário Ativo',
-        'Criador de Conteúdo',
-        'Doador - Usuário VIP',
-        'Tradutor',
-        'Encoder',
-        'Uploader',
-        'Moderador',
-        'Administrador',
-        'Fundador'
+        'Novato',                 //1
+        'Membro',                 //2
+        'Usuário Ativo',          //3
+        'Criador de Conteúdo',    //4
+        'Doador - Usuário VIP',   //5
+        'Tradutor',               //6
+        'Encoder',                //7
+        'Uploader',               //8
+        'Moderador',              //9
+        'Administrador',          //10
+        'Fundador'                //11
     ],
     infos: {
       anime: {
@@ -168,7 +170,7 @@ export default {
       }
     }
   }),
-  components: {VDataTable},
+  components: { ViewCountComponent, VDataTable},
   methods: {
     carregarTudo(){
       this.carregarActiveUsers();
@@ -212,6 +214,9 @@ export default {
       this.axios.get('admin/report/getReportsInfo').then((response) => {
         this.infos.report = response.data;
       });
+    },
+    goAnime(idAnime){
+      this.$router.push({name: 'Anime', params: {id: idAnime}});
     }
   },
   mounted() {
@@ -239,5 +244,14 @@ export default {
 .admin-home-tabela {
   padding: 5px;
   grid-area: tabela;
+}
+
+.link-nome {
+  cursor: pointer;
+}
+
+.link-nome:hover {
+  text-decoration: underline;
+  color: rgb(0,150,255);
 }
 </style>

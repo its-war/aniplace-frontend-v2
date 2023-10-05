@@ -16,6 +16,7 @@ import SelecionarAnimeComponent from "@/admin/components/anime/SelecionarAnimeCo
 import AnimeAddTemporadaForm from "@/admin/components/anime/AnimeAddTemporadaForm.vue";
 import AnimeAddEpisodioComponent from "@/admin/components/anime/AnimeAddEpisodioComponent.vue";
 import EditarEpisodioComponent from "@/admin/components/anime/EditarEpisodioComponent.vue";
+import VerTodosComponent from "@/components/globalComponents/VerTodosComponent.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -61,7 +62,10 @@ const router = createRouter({
             {
               path: 'anime/selecionar',
               name: 'Selecionar Anime',
-              component: SelecionarAnimeComponent
+              component: SelecionarAnimeComponent,
+              props: {
+                opcao: 1
+              }
             },
             {
               path: 'anime/add/temporada/:idAnime',
@@ -77,8 +81,32 @@ const router = createRouter({
               path: 'anime/editar/episodio',
               name: 'Editar Episódio',
               component: EditarEpisodioComponent
+            },
+            {
+              path: 'destaque/cadastrar',
+              name: 'Cadastrar Destaque',
+              component: SelecionarAnimeComponent,
+              props: {
+                opcao: 2
+              }
             }
           ]
+        },
+        {
+          path: 'episodios/ver-todos',
+          name: 'Ver todos os episódios',
+          component: VerTodosComponent,
+          props: {
+            isAnime: false
+          }
+        },
+        {
+          path: 'animes/ver-todos',
+          name: 'Ver todos os animes',
+          component: VerTodosComponent,
+          props: {
+            isAnime: true
+          }
         }
       ]
     },
@@ -110,6 +138,14 @@ const router = createRouter({
 })
 
 router.beforeEach(async (to, from, next) => {
+  let urlAtual = window.location.href;
+  if(urlAtual.includes('db.aniplace.top')){
+    window.location.href = 'https://aniplace.top';
+  }
+  if(urlAtual.includes('realm.dragonsoul.com.br')){
+    window.location.href = 'https://dragonsoul.com.br';
+  }
+
   const main = mainStore();
   const user = userStore();
   adblock((block) => {
@@ -135,6 +171,10 @@ router.beforeEach(async (to, from, next) => {
   let rota = to.path.split('/')[1];
 
   if(logged){
+    if(user.getRanking === 5 || user.getRanking >= 10){
+      main.setAdsOff();
+    }
+
     if(rota === 'admin'){
       if(user.getRanking > 5){
         next();

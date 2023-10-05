@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar id="appbar" style="transition: 300ms;" :class="!isMobile?'appbar-transparent':''" elevation="0">
+  <v-app-bar id="appbar" style="transition: 300ms; overflow: visible" :class="!isMobile?'appbar-transparent':''" elevation="0">
     <v-app-bar-nav-icon @click.stop="menuMobile = !menuMobile"  v-show="isMobile || isAdmin"/>
     <v-toolbar-title @click="goRoute('Home')">
       <div class="d-flex" style="align-items: center">
@@ -11,7 +11,7 @@
       <v-btn tag="a" v-show="!isMobile" @click="goRoute('Home')">Home</v-btn>
       <v-btn tag="a" v-show="!isMobile" @click="goRoute('Animes', {pagina: 1})">Animes</v-btn>
       <v-btn v-show="false" tag="a" @click="goRoute('Feed')">Feed</v-btn><!-- v-show="!isMobile" -->
-      <v-btn v-if="isAdmin" tag="a" @click="goRoute('Admin Home')">Admin</v-btn><!-- v-show="!isMobile" -->
+      <v-btn v-if="isAdmin" v-show="!isMobile" tag="a" @click="goRoute('Admin Home')">Admin</v-btn><!-- v-show="!isMobile" -->
       <v-btn icon tag="a" v-show="!isMobile">
         <v-avatar v-if="isLogged && $store.user.getFoto" :image="$getImg($store.user.getFoto, 'user/foto')"></v-avatar>
         <v-icon v-else icon="mdi-account"/>
@@ -31,40 +31,40 @@
           </v-list>
         </v-menu>
       </v-btn>
-      <v-text-field placeholder="Pesquisar..."
-                    append-inner-icon="mdi-magnify"
-                    variant="outlined"
-                    density="compact"
-                    v-model="pesquisa.text"
-                    class="search-field"
-                    @keyup="pesquisar"
-                    v-on:keydown.enter="search(pesquisa.text)"
-                    v-show="getLarguraJanela >= 550"></v-text-field>
-    </template>
-  </v-app-bar>
-  <v-card v-show="pesquisa.painel" style="position: absolute; top: 60px; right: 10px; z-index: 100" width="300px" height="400px">
-    <div v-if="pesquisa.resultado.length > 0">
-      <div class="anime-search" v-for="(anime, i) in pesquisa.resultado" :key="i" @click="goRoute('Anime', {id: anime.idAnime})">
-        <div class="anime-img">
-          <img :src="$getImg(anime.foto, 'anime/foto')" alt=""/>
-        </div>
-        <div class="anime-nome">
-          <span>{{anime.nome}}</span>
-          <div style="bottom: 0">
-            <span style="font-size: 9px">{{anime.ano}}</span>
-            <span style="font-size: 9px" v-if="anime.audio === 1">Dublado/Legendado</span>
-            <span style="font-size: 9px" v-if="anime.audio === 2">Legendado</span>
-            <span style="font-size: 9px" v-if="anime.audio === 3">Dublado</span>
-            <div>
-              <div v-for="(genero, g) in anime.generos" :key="g" style="display: inline-block">
-                <span v-if="g <= 4" style="display: inline-block; font-size: 9px; background-color: #c30000; color: white; border-radius: 3px; padding: 1px 2px; margin: 1px 2px 0 0">{{genero.nome}}</span>
+      <div v-if="!isMobile" class="search-field" v-click-outside="searchClickOut">
+        <v-text-field placeholder="Pesquisar..."
+                      append-inner-icon="mdi-magnify"
+                      variant="outlined"
+                      density="compact"
+                      v-model="pesquisa.text"
+                      @keyup="pesquisar"
+                      v-on:keydown.enter="search(pesquisa.text)"></v-text-field>
+        <v-card v-show="pesquisa.painel" style="position: absolute; top: 60px; right: 10px; z-index: 100" width="300px" height="400px">
+          <div v-if="pesquisa.resultado.length > 0">
+            <div class="anime-search" v-for="(anime, i) in pesquisa.resultado" :key="i" @click="goRoute('Anime', {id: anime.idAnime})">
+              <div class="anime-img">
+                <img :src="$getImg(anime.foto, 'anime/foto')" alt=""/>
+              </div>
+              <div class="anime-nome">
+                <span>{{anime.nome}}</span>
+                <div style="bottom: 0">
+                  <span style="font-size: 9px">{{anime.ano}}</span>
+                  <span style="font-size: 9px" v-if="anime.audio === 1">Dublado/Legendado</span>
+                  <span style="font-size: 9px" v-if="anime.audio === 2">Legendado</span>
+                  <span style="font-size: 9px" v-if="anime.audio === 3">Dublado</span>
+                  <div>
+                    <div v-for="(genero, g) in anime.generos" :key="g" style="display: inline-block">
+                      <span v-if="g <= 4" style="display: inline-block; font-size: 9px; background-color: #c30000; color: white; border-radius: 3px; padding: 1px 2px; margin: 1px 2px 0 0">{{genero.nome}}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </v-card>
       </div>
-    </div>
-  </v-card>
+    </template>
+  </v-app-bar>
   <v-navigation-drawer v-model="activeDrawer" :rail="onAdminPage" :expand-on-hover="onAdminPage" class="drawer-mobile">
 
     <template v-slot:prepend>
@@ -109,13 +109,13 @@
           <v-list-item prepend-icon="mdi-security" title="Admin" value="admin" v-bind="props"></v-list-item>
         </template>
 
-        <v-list-item @click="goRoute('Admin Home')" prepend-icon="mdi-security-network" title="Admin Home" value="admin"></v-list-item>
-        <v-list-item prepend-icon="mdi-account-multiple" title="Usuários" value="usuarios"></v-list-item>
-        <v-list-item prepend-icon="mdi-alert" title="Reportes" value="reportes"></v-list-item>
+        <v-list-item @click="goRoute('Admin Home')" title="Admin Home" value="admin"></v-list-item>
+        <v-list-item title="Usuários" value="usuarios"></v-list-item>
+        <v-list-item title="Reportes" value="reportes"></v-list-item>
 
         <v-list-group value="AdminAnime">
           <template v-slot:activator="{props}">
-            <v-list-item v-bind="props" prepend-icon="mdi-animation-play" title="Animes" value="admin-animes"></v-list-item>
+            <v-list-item v-bind="props" title="Animes" value="admin-animes"></v-list-item>
           </template>
 
           <v-list-item @click="goRoute('Cadastrar Anime')" title="Cadastrar" value="cadastrar-animes"></v-list-item>
@@ -130,6 +130,18 @@
             <v-list-item title="Anime" value="editar-anime"></v-list-item>
             <v-list-item @click="goRoute('Editar Episódio')" title="Episódio" value="editar-episodio"></v-list-item>
           </v-list-group>
+        </v-list-group>
+        <v-list-group value="AdminDestaques">
+          <template v-slot:activator="{props}" title="Destaques">
+            <v-list-item
+              v-bind="props"
+              title="Destaques"
+              value="admin-destaques">
+              <template v-slot:title>Destaques</template>
+            </v-list-item>
+          </template>
+
+          <v-list-item @click="goRoute('Cadastrar Destaque')" title="Add" value="add-destaque"></v-list-item>
         </v-list-group>
       </v-list-group>
     </v-list>
@@ -212,6 +224,7 @@ export default {
     goRoute(nomeRota, params = false){
       this.pesquisa.painel = false;
       this.pesquisa.resultado = [];
+      this.pesquisa.text = '';
       this.$router.push({name: nomeRota, params: params});
       if(this.isMobile){
         this.menuMobile = false;
@@ -219,7 +232,7 @@ export default {
       this.menuMobile = false;
     },
     pesquisar(){
-      if(this.pesquisa.text.length >= 3){
+      if(this.pesquisa.text.length >= 1){
         this.axios.get('anime/pesquisa?texto=' + this.pesquisa.text + '&pagina=1').then((value) => {
           this.pesquisa.painel = true;
           this.pesquisa.resultado = value.data.animes;
@@ -236,10 +249,11 @@ export default {
       return useFadeOut;
     },
     search(texto){
-      if(this.$route.name !== 'Animes'){
-        if(texto.length > 0){
-          this.$router.push({name: 'Animes', params: {pagina: 1}, query: {text: texto}});
-        }
+      if(texto.length > 0){
+        this.$router.push({name: 'Animes', params: {pagina: 1}, query: {text: texto}});
+        this.pesquisa.painel = false;
+        this.pesquisa.text = '';
+        this.pesquisa.resultado = [];
       }
     },
     logout(){
@@ -254,6 +268,9 @@ export default {
           }
         }
       });
+    },
+    searchClickOut(){
+      this.pesquisa.painel = false;
     }
   },
   mounted() {

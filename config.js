@@ -1,5 +1,5 @@
 // config.js
 export default {
-    development: 'http://localhost:8080',
+    development: 'http://192.168.0.22:8080',
     production: 'https://aniplace.top',
 };

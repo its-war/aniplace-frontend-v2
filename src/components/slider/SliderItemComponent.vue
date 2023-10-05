@@ -2,8 +2,16 @@
   <v-slide-group-item>
     <div @click="clickEvent" class="item" :style="isMobile?'height: 100px !important; margin: 9px 3px;':''">
       <div class="item-numero" :style="isMobile?'font-size: 13px;':''">
-        <span v-if="$props.numero > 0 && $props.temporada">{{$props.temporada}}ª Temporada, Ep. {{$props.numero}}</span>
+        <span v-if="$props.numero > 0 && $props.temporada">
+          {{$props.temporada}}ª {{isMobile?'Temp.':'Temporada'}}, Ep. {{$props.numero}}
+        </span>
+
+        <span v-if="$props.temporadaLancamento > 0">
+          {{$props.temporadaLancamento}}ª Temp. em breve
+        </span>
+
         <span v-if="$props.numero > 0 && $props.temporada === null">Episódio {{$props.numero}}</span>
+
         <span v-if="$props.showNota"><v-icon icon="mdi-star" color="yellow"/>{{parseFloat($props.nota).toFixed(2)}}</span>
       </div>
       <img :src="$getImg($props.foto, 'anime/capa')" :alt="$props.nome" style="height: 100%"/>
@@ -49,6 +57,10 @@ export default {
     nota: {
       type: String,
       default: null
+    },
+    temporadaLancamento: {
+      type: Number,
+      default: 0
     }
   },
   computed: {

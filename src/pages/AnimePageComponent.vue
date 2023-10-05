@@ -40,18 +40,20 @@
               </v-tooltip>
               <v-tooltip text="Site oficial do anime" location="top" theme="light">
                 <template v-slot:activator="{props}">
-                  <v-icon v-show="anime.site" icon="mdi-web" v-bind="props"></v-icon>
+                  <v-icon @click="openSite(anime.site)" v-show="anime.site" icon="mdi-web" v-bind="props"></v-icon>
                 </template>
               </v-tooltip>
               <v-tooltip text="Página oficial do anime no MyAnimeList" location="top" theme="light">
               <template v-slot:activator="{props}">
-                <MyanimelistIcon v-show="anime.myanimelist" style="fill: white" v-bind="props"/>
+                <MyanimelistIcon @click="openSite(anime.myanimelist)" v-show="anime.myanimelist" style="fill: white; cursor: pointer" v-bind="props"/>
               </template>
             </v-tooltip>
+              {{getDiaLancamento}}
             </span>
-            <div class="anime-votos" v-if="userIsLogged" style="padding-top: 5px" :style="!isMobile? 'width: 250px' : ''">
+            <div class="anime-votos" v-if="userIsLogged && !isMobile" style="padding-top: 5px; margin-bottom: 5px" :style="!isMobile? 'width: 250px' : ''">
               <v-select
                   label="Sua nota"
+                  style="margin-bottom: -15px"
                   color="info"
                   density="compact"
                   :loading="notaLoading"
@@ -67,6 +69,7 @@
                 </template>
               </v-select>
             </div>
+            <ViewCountComponent v-if="anime.acessos" :views="anime.acessos" :short="isMobile"/>
 
             <div v-if="!isMobile" class="sinopse" style="overflow: auto; max-height: 70%; width: 50%">
               <p v-for="(paragrafo, i) in anime.sinopse" :key="i" style="margin-bottom: 10px; text-indent: 3em; font-size: 12px" :style="isTablet ? 'padding-right: 10px; font-size: 5px !important;' : ''">
@@ -77,6 +80,27 @@
           </div>
         </div>
       </div>
+    </div>
+    <div class="anime-votos"
+         v-if="userIsLogged && isMobile"
+         style="padding-top: 5px; position: relative; z-index: 3; width: 80%; margin: auto">
+      <v-select
+        label="Sua nota"
+        style="margin-bottom: -15px"
+        color="info"
+        density="compact"
+        :loading="notaLoading"
+        v-model="userNota"
+        :items="notas"
+        item-title="text"
+        item-value="nota"
+        variant="solo-filled"
+        v-on:update:modelValue="mudarVoto"
+      >
+        <template v-slot:prepend-inner>
+          <v-icon icon="mdi-star" color="yellow"/>
+        </template>
+      </v-select>
     </div>
     <div v-if="isMobile" class="sinopse" style="overflow: auto; max-height: 200px; width: 95%; margin: 10px auto; z-index: 5; position: relative; padding-left: 35px">
       <p v-for="(paragrafo, i) in anime.sinopse" :key="i" style="margin-bottom: 10px; text-indent: 3em; font-size: 12px" :style="isTablet ? 'padding-right: 10px; font-size: 10px !important;' : ''">
@@ -139,16 +163,22 @@
         </v-window-item>
       </v-window>
     </div>
+    <article style="z-index: 3; position: relative; width: 80%; margin: auto" :style="isMobile?'width: 95%':''">
+      <ComentariosComponent v-if="anime.idAnime" :tipo="2" :id-origem="anime.idAnime"/>
+    </article>
   </div>
 </template>
 
 <script>
 import {useDisplay} from "vuetify";
 import {MyanimelistIcon} from 'vue3-simple-icons';
+import axiosLocal from 'axios';
+import ViewCountComponent from "@/components/ViewCountComponent.vue";
+import ComentariosComponent from "@/components/comments/ComentariosComponent.vue";
 
 export default {
   name: "AnimePageComponent",
-  components: {MyanimelistIcon},
+  components: { ComentariosComponent, ViewCountComponent, MyanimelistIcon},
   computed: {
     isMobile(){
       return useDisplay().mobile.value;
@@ -209,6 +239,27 @@ export default {
     },
     getAnimeNota(){
       return parseFloat(this.animeNota).toFixed(2);
+    },
+    getDiaLancamento(){
+      if(this.anime.status){
+        if(this.anime.status === 2){
+          if(this.anime.dia === 1)
+            return 'Todo domingo';
+          if(this.anime.dia === 2)
+            return 'Toda segunda';
+          if(this.anime.dia === 3)
+            return 'Toda terça';
+          if(this.anime.dia === 4)
+            return 'Toda quarta';
+          if(this.anime.dia === 5)
+            return 'Toda quinta';
+          if(this.anime.dia === 6)
+            return 'Toda sexta';
+          if(this.anime.dia === 7)
+            return 'Toda sábado';
+        }
+      }
+      return '';
     }
   },
   data: () => ({
@@ -223,6 +274,7 @@ export default {
         }
       ],
       "status": null,
+      "dia": 0,
       "ano": null,
       "disponibilidade": null,
       "audio": null,
@@ -256,17 +308,7 @@ export default {
     totalVotos: 0
   }),
   mounted() {
-    this.carregarAnimeNota();
-
-    this.axios.get('rating/getVoto?idAnime=' + this.$route.params.id).then((response) => {
-      this.userNota = response.data.nota;
-    });
-
-    this.axios.get('anime/listar?id=' + this.$route.params.id).then((value) => {
-      this.anime = value.data[0];
-      this.$socket.emit('acessoAnime', value.data[0].idAnime);
-      document.title = this.anime.nome + ' — Aniplace';
-    });
+    this.loadPage();
   },
   methods: {
     openDialogImg(index){
@@ -297,7 +339,8 @@ export default {
       link = link.split('/d/')[1];
       link = link.split('/')[0];
       link = 'https://drive.google.com/uc?id=' + link + '&export=download';
-      window.open(link, '_blank');
+
+      window.open('https://ouo.io/qs/t7VbKlXW?s=' + link, '_blank');
     },
     mudarVoto(){
       this.notaLoading = true;
@@ -315,6 +358,27 @@ export default {
         this.animeNota = response.data.nota;
         this.totalVotos = response.data.totalVotos;
       });
+    },
+    openSite(url){
+      window.open(url, '_blank');
+    },
+    loadPage(){
+      this.carregarAnimeNota();
+
+      this.axios.get('rating/getVoto?idAnime=' + this.$route.params.id).then((response) => {
+        this.userNota = response.data.nota;
+      });
+
+      this.axios.get('anime/listar?id=' + this.$route.params.id).then((value) => {
+        this.anime = value.data[0];
+        this.$socket.emit('acessoAnime', value.data[0].idAnime);
+        document.title = this.anime.nome + ' — Aniplace';
+      });
+    }
+  },
+  watch: {
+    '$route.params.id'(){
+      this.loadPage();
     }
   }
 }

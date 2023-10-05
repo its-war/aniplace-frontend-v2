@@ -44,10 +44,13 @@
                     style="margin-top: 5px"
                     v-model="temporadaSelecionada"
                     :items="selectTemporadas"/>
+
           <v-text-field label="Cole o link do episódio"
                       v-model="link"
                       variant="outlined"
                       density="comfortable"/>
+
+          <v-checkbox v-model="isOva" label="Marque essa caixa se o episódio for um OVA." color="red"/>
         </v-card-text>
         <v-card-actions>
           <v-spacer/>
@@ -103,7 +106,8 @@ export default {
     loading: false,
     snackbar: false,
     snackbarText: '',
-    temporadaSelecionada: null
+    temporadaSelecionada: null,
+    isOva: false
   }),
   methods: {
     goBack(){
@@ -128,11 +132,13 @@ export default {
           link1080p: this.link,
           link720p: this.link,
           linkOnline: this.link,
+          ova: this.isOva
         }).then((response) => {
           if(response.data.cadastro){
             this.snackbarText = 'Episódio cadastrado com sucesso.';
             this.link = '';
             this.temporadaSelecionada = null;
+            this.isOva = false;
           }else{
             this.snackbarText = 'Erro ao cadastrar. Tente novamente.';
           }
