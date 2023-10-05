@@ -240,6 +240,7 @@ export default {
 
 .video-player {
   width: 100%;
+  max-width: 1000px;
   aspect-ratio: 16/9;
 }
 
