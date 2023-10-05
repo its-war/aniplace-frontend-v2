@@ -87,7 +87,7 @@
           <v-progress-circular indeterminate color="red" size="70"/>
         </div>
         <div :style="{ width: getAnimeWidth + 'px', height: getAnimeHeight + 'px' }" v-for="(anime, i) in getAnimes" :key="i" style="padding: 5px;">
-          <div class="container noselect" @click="goAnime(anime.idAnime)">
+          <div class="container noselect" @click.left="goAnime(anime.idAnime)" @click.middle.prevent="abrirNovaAba('/anime/' + anime.idAnime)">
             <div class="canvas">
               <div class="tracker tr-1"></div>
               <div class="tracker tr-2"></div>
@@ -149,6 +149,8 @@
 </template>
 
 <script>
+import config from "../../config";
+
 export default {
   name: "AnimesPage",
   data: () => ({
@@ -230,6 +232,10 @@ export default {
     },
     goAnime(id){
       this.$router.push({name: 'Anime', params: {id: id}});
+    },
+    abrirNovaAba(path = '/'){
+      const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
+      window.open(apiUrl + path, '_blank');
     },
     pullData(){
       this.paginator.animes = [];

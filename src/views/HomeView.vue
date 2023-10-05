@@ -1,17 +1,38 @@
 <template>
   <v-app-bar id="appbar" style="transition: 300ms; overflow: visible" :class="!isMobile?'appbar-transparent':''" elevation="0">
     <v-app-bar-nav-icon @click.stop="menuMobile = !menuMobile"  v-show="isMobile || isAdmin"/>
-    <v-toolbar-title @click="goRoute('Home')">
+    <v-toolbar-title @click.left="goRoute('Home')" @click.middle.prevent="abrirNovaAba('/')">
       <div class="d-flex" style="align-items: center">
         <img :src="getImg" alt="Logo" style="width: 70px; cursor: pointer"/>
         <span style="cursor: pointer">Aniplace</span>
       </div>
     </v-toolbar-title>
     <template v-slot:append>
-      <v-btn tag="a" v-show="!isMobile" @click="goRoute('Home')">Home</v-btn>
-      <v-btn tag="a" v-show="!isMobile" @click="goRoute('Animes', {pagina: 1})">Animes</v-btn>
-      <v-btn v-show="false" tag="a" @click="goRoute('Feed')">Feed</v-btn><!-- v-show="!isMobile" -->
-      <v-btn v-if="isAdmin" v-show="!isMobile" tag="a" @click="goRoute('Admin Home')">Admin</v-btn><!-- v-show="!isMobile" -->
+      <v-btn
+        tag="a"
+        v-show="!isMobile"
+        @click.middle.prevent="abrirNovaAba('/')"
+        @click.left="goRoute('Home')">Home</v-btn>
+
+      <v-btn
+        tag="a"
+        v-show="!isMobile"
+        @click.middle.prevent="abrirNovaAba('/animes/1')"
+        @click.left="goRoute('Animes', {pagina: 1})">Animes</v-btn>
+
+      <v-btn
+        v-show="false"
+        tag="a"
+        @click.middle.prevent="abrirNovaAba('/feed/')"
+        @click.left="goRoute('Feed')">Feed</v-btn><!-- v-show="!isMobile" -->
+
+      <v-btn
+        v-if="isAdmin"
+        v-show="!isMobile"
+        tag="a"
+        @click.middle.prevent="abrirNovaAba('/admin/')"
+        @click.left="goRoute('Admin Home')">Admin</v-btn><!-- v-show="!isMobile" -->
+
       <v-btn icon tag="a" v-show="!isMobile">
         <v-avatar v-if="isLogged && $store.user.getFoto" :image="$getImg($store.user.getFoto, 'user/foto')"></v-avatar>
         <v-icon v-else icon="mdi-account"/>
@@ -109,8 +130,20 @@
     <v-divider></v-divider>
 
     <v-list density="compact" :nav="true">
-      <v-list-item @click="goRoute('Home')" prepend-icon="mdi-home-city" title="Home" value="home"></v-list-item>
-      <v-list-item @click="goRoute('Animes', {pagina: 1})" prepend-icon="mdi-animation-play" title="Animes" value="animes"></v-list-item>
+      <v-list-item
+        @click.left="goRoute('Home')"
+        @click.middle.prevent="abrirNovaAba('/')"
+        prepend-icon="mdi-home-city"
+        title="Home"
+        value="home"></v-list-item>
+
+      <v-list-item
+        @click.left="goRoute('Animes', {pagina: 1})"
+        @click.middle.prevent="abrirNovaAba('/animes/1')"
+        prepend-icon="mdi-animation-play"
+        title="Animes"
+        value="animes"></v-list-item>
+
       <v-list-item v-if="false" prepend-icon="mdi-note-text" title="Feed" value="feed"></v-list-item>
 
       <v-list-group value="Admin" v-if="isAdmin">
@@ -118,7 +151,12 @@
           <v-list-item prepend-icon="mdi-security" title="Admin" value="admin" v-bind="props"></v-list-item>
         </template>
 
-        <v-list-item @click="goRoute('Admin Home')" title="Admin Home" value="admin"></v-list-item>
+        <v-list-item
+          @click.left="goRoute('Admin Home')"
+          @click.middle.prevent="abrirNovaAba('/admin/')"
+          title="Admin Home"
+          value="admin"></v-list-item>
+
         <v-list-item title="Usuários" value="usuarios"></v-list-item>
         <v-list-item title="Reportes" value="reportes"></v-list-item>
 
@@ -165,6 +203,7 @@
                   v-on:keydown.enter="search(mobileSearch)"
     ></v-text-field>
   </v-navigation-drawer>
+  <div class="dispachar-click" style="display: none"></div>
   <router-view v-slot="{Component}">
     <transition @enter="fadeIn" @leave="fadeOut">
       <component :is="Component"/>
@@ -178,6 +217,7 @@ import { useDisplay } from 'vuetify';
 import img from "@/assets/logo-final.png";
 import FooterComponent from "@/components/globalComponents/FooterComponent.vue";
 import {useFadeIn, useFadeOut} from '@/utils/animations';
+import config from "../../config";
 export default {
   components: {FooterComponent},
   computed: {
@@ -239,6 +279,10 @@ export default {
         this.menuMobile = false;
       }
       this.menuMobile = false;
+    },
+    abrirNovaAba(path = '/'){
+      const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
+      window.open(apiUrl + path, '_blank');
     },
     pesquisar(){
       if(this.pesquisa.text.length >= 1){
