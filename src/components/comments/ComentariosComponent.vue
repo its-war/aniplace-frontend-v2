@@ -36,20 +36,24 @@
       <h2 :style="isMobile?'font-size: 14px':''" v-else>Ainda não há comentários.</h2>
     </div>
   </div>
+  <div class="text-center">
+    <AdsComponent/>
+  </div>
 </template>
 
 <script>
 /*
-* ## tipos de comentarios com base no local onde eles aparecerão ##
-* 1 - episodio
-* 2 - anime
-* 3 - post
+* ### tipos de comentarios com base no local onde eles aparecerão ###
+* @param 1 - episodio
+* @param 2 - anime
+* @param 3 - post
 * */
 import ComentarioComponent from "@/components/comments/ComentarioComponent.vue";
 import NewComentario from "@/components/comments/NewComentario.vue";
+import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 export default {
   name: "ComentariosComponent",
-  components: { NewComentario, ComentarioComponent},
+  components: { AdsComponent, NewComentario, ComentarioComponent},
   data: () => ({
     ordemComments: 1,
     comentarios: [],

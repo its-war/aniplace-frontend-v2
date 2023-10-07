@@ -28,7 +28,9 @@
         <v-progress-circular indeterminate color="red" size="70"/>
       </div>
       <div class="item-array" v-for="(episodio, i) in paginator.animes" :key="i" :style="isMobile?'width: 100%':''">
-        <div class="item-object">
+        <div class="item-object"
+             @click.middle.prevent="abrirNovaAba(`/anime/${episodio.anime.idAnime}/episodio/${episodio.temporada}/${episodio.numero}/online`)"
+             @click.left="goEpisodio(episodio.anime.idAnime, episodio.temporada, episodio.numero)">
           <div style="width: 100%; position: relative">
             <v-img :src="$getImg(episodio.anime.capa, 'anime/capa')"
                    aspect-ratio="16/9"
@@ -66,13 +68,18 @@
         color="red"
         :disabled="pageLoading"
       ></v-pagination>
+
+      <AdsComponent/>
     </div>
   </v-sheet>
 </template>
 
 <script>
+import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
+import config from "../../../config";
 export default {
   name: "VerTodosComponent",
+  components: { AdsComponent },
   computed: {
     isMobile(){
       return this.$store.main.isMobile;
@@ -99,7 +106,7 @@ export default {
     this.paginator.animes = this.$store.main.getAnimeList;
     this.paginator.total = this.$store.main.getTotalPages;
   },
-  methods: {//TODO: terminar de implementar função 'Ver Todos'
+  methods: {
     carregarAnimes(){
       this.pageLoading = true;
       this.paginator.animes = [];
@@ -113,7 +120,17 @@ export default {
         this.pageLoading = false;
       });
     },
-    goEpisodio(){},
+    goEpisodio(idAnime, temporada, numero){
+      this.$router.push({name: 'Episódio', params: {
+        idAnime: idAnime,
+          temporada: temporada,
+          numero: numero
+      }});
+    },
+    abrirNovaAba(path = '/'){
+      const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
+      window.open(apiUrl + path, '_blank');
+    },
     getData(registro){
       let data = new Date(registro);
       return `${data.getDate() < 10 ? '0' + data.getDate() : data.getDate()}/${data.getMonth() < 10 ? '0' + data.getMonth() : data.getMonth()}/${data.getFullYear()}`;

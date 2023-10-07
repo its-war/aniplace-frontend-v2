@@ -127,6 +127,11 @@
       </v-dialog>
 
     </div>
+
+    <div class="text-center" style="z-index: 3; position: relative">
+      <AdsComponent/>
+    </div>
+
     <div v-if="anime.temporadas" style="z-index: 3; position: relative" class="episodios" id="episodios">
       <v-tabs v-model="temporadaTab" align-tabs="center" color="red" :center-active="true">
         <v-tab v-for="(temporada, i) in anime.temporadas" :key="i" :size="isMobile?'x-small':'default'" :value="temporada.numeroTemporada">
@@ -175,10 +180,11 @@ import {MyanimelistIcon} from 'vue3-simple-icons';
 import axiosLocal from 'axios';
 import ViewCountComponent from "@/components/ViewCountComponent.vue";
 import ComentariosComponent from "@/components/comments/ComentariosComponent.vue";
+import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 
 export default {
   name: "AnimePageComponent",
-  components: { ComentariosComponent, ViewCountComponent, MyanimelistIcon},
+  components: { AdsComponent, ComentariosComponent, ViewCountComponent, MyanimelistIcon},
   computed: {
     isMobile(){
       return useDisplay().mobile.value;

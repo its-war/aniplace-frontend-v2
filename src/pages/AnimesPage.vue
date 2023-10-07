@@ -143,6 +143,7 @@
             :total-visible="7"
             color="red"
         ></v-pagination>
+        <AdsComponent/>
       </div>
     </v-sheet>
   </v-main>
@@ -150,9 +151,11 @@
 
 <script>
 import config from "../../config";
+import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 
 export default {
   name: "AnimesPage",
+  components: { AdsComponent },
   data: () => ({
     filtrosDialog: false,
     filtros: {

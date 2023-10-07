@@ -173,6 +173,7 @@ app.config.globalProperties.$store = store;
 app.config.globalProperties.$limitarTexto = limitarTexto
 app.config.globalProperties.$getImg = getImg
 app.config.globalProperties.$socket = io(apiUrl)
+app.config.globalProperties.$urlBase = apiUrl
 
 app.mount('#app')
 

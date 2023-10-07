@@ -152,6 +152,9 @@ router.beforeEach(async (to, from, next) => {
     main.setAdblock(block);
   });
 
+  let adsActive = await main.getAdsActiveConfig();
+  main.setAdsActive(adsActive);
+
   main.setLoading(true);
 
   let token = window.localStorage.getItem('router-verify-data');

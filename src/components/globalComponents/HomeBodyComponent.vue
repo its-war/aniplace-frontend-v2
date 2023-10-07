@@ -11,6 +11,10 @@
                        :show-ver-todos="true"
       />
 
+      <div class="text-center">
+        <AdsComponent/>
+      </div>
+
       <SliderComponent v-if="maisAcessados.length > 0"
                        slide-nome="Animes em alta"
                        icon="mdi-fire"
@@ -42,6 +46,10 @@
 
       <!--SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/-->
       <!-- TODO: iniciar a criação de um algoritmo de automação para alimentar esses sliders -->
+
+      <div class="text-center">
+        <AdsComponent/>
+      </div>
     </v-main>
   </div>
 </template>
@@ -49,10 +57,11 @@
 <script>
 import SliderComponent from "@/components/slider/SliderComponent.vue";
 import CarouselComponent from "@/components/carousel/CarouselComponent.vue";
+import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 
 export default {
   name: "HomeBodyComponent",
-  components: {CarouselComponent, SliderComponent},
+  components: { AdsComponent, CarouselComponent, SliderComponent},
   data: () => ({
     maisVistos: [],
     maisAcessados: [],

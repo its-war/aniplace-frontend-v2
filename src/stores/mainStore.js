@@ -8,7 +8,8 @@ export default defineStore('main', {
         loading: false,
         animeList: [],
         totalPages: 1,
-        tituloVerTodos: ''
+        tituloVerTodos: '',
+        adsActive: true
     }),
     getters: {
         getAdblockValue: (state) => {
@@ -31,6 +32,9 @@ export default defineStore('main', {
         },
         getTituloVerTodos: (state) => {
             return state.tituloVerTodos;
+        },
+        getAdsActive: (state) => {
+            return state.adsActive;
         }
     },
     actions: {
@@ -71,6 +75,18 @@ export default defineStore('main', {
         },
         setTituloVerTodos(titulo){
             this.tituloVerTodos = titulo;
+        },
+        getAdsActiveConfig(){
+            return new Promise((resolve, reject) => {
+                window._axios.get('ads/adsActive').then((response) => {
+                    resolve(response.data.adsActive);
+                }).catch(() => {
+                    resolve(true);
+                });
+            });
+        },
+        setAdsActive(value){
+            this.adsActive = value;
         }
     }
 });
