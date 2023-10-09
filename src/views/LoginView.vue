@@ -22,7 +22,7 @@
 
           <div v-show="captcha.svg" style="width: 100%">
             <div id="captcha"></div>
-            <v-text-field v-model="login.texto" label="Digite o código da imagem" placeholder="Ex: gh57He" density="compact"></v-text-field>
+            <v-text-field @keyup.enter="doLogin" v-model="login.texto" label="Digite o código da imagem" placeholder="Ex: gh57He" density="compact"></v-text-field>
           </div>
         </div>
 
