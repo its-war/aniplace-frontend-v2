@@ -101,7 +101,7 @@ export default {
           if(response.data.episodio){
             this.episodio = response.data.episodio;
             this.$socket.emit('acessoAnime', this.episodio.anime.idAnime);
-            this.$socket.emit('acessoEpisodio', this.episodio.idEpisodio);
+            this.$socket.emit('acessoEpisodio', this.$route.params.idAnime, this.$route.params.numero, this.$route.params.temporada);
             document.title = this.episodio.anime.nome + ' - ' + this.$route.params.temporada + 'ª Temporada, episódio ' + this.$route.params.numero + ' — Aniplace';
           }
         }).finally(() => {
@@ -125,16 +125,18 @@ export default {
       return n;
     },
     goEpisodio(t, n){
-      this.loadingPage = true;
-      this.$router.push({
-        name: 'Episódio',
-        params: {
-          idAnime: this.episodio.anime.idAnime,
-          temporada: t, numero: n
-        }
-      }).then(() => {
-        this.carregarEpisodio();
-      });
+      if(parseInt(this.$route.params.temporada) !== t || parseInt(this.$route.params.numero) !== n){
+        this.loadingPage = true;
+        this.$router.push({
+          name: 'Episódio',
+          params: {
+            idAnime: this.episodio.anime.idAnime,
+            temporada: t, numero: n
+          }
+        }).then(() => {
+          this.carregarEpisodio();
+        });
+      }
     },
     proximo(){
       let total = this.episodio.temporadas[this.episodio.temporada - 1].totalEpisodios;

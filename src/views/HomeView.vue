@@ -1,9 +1,9 @@
 <template>
   <v-app-bar id="appbar" style="transition: 300ms; overflow: visible" :class="!isMobile?'appbar-transparent':''" elevation="0">
     <v-app-bar-nav-icon @click.stop="menuMobile = !menuMobile"  v-show="isMobile || isAdmin"/>
-    <v-toolbar-title @click.left="goRoute('Home')" @click.middle.prevent="abrirNovaAba('/')">
+    <v-toolbar-title style="user-select: none" @click.left="goRoute('Home')" @click.middle.prevent="abrirNovaAba('/')">
       <div class="d-flex" style="align-items: center">
-        <img :src="getImg" alt="Logo" style="width: 70px; cursor: pointer"/>
+        <img :src="getImg" alt="Logo" style="width: 70px; pointer-events: none"/>
         <span style="cursor: pointer">Aniplace</span>
       </div>
     </v-toolbar-title>
