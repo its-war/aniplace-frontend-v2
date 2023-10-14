@@ -30,15 +30,17 @@
                   </v-col>
                   <v-col cols="12" sm="3" style="padding-right: 5px">
                     <span :style="isMobile?'font-size: 12px;':''">Disponibilidade</span>
-                    <v-select :density="isMobile?'compact':'default'" v-model="filtros.disponibilidade" variant="solo-filled" :items="['Todos', 'Online', 'Download']"></v-select>
+                    <v-select :density="isMobile?'compact':'default'" v-model="filtros.disponibilidade" variant="solo-filled" :items="[{value: 1, title: 'Todos'}, {value: 2, title: 'Online'}, {value: 3, title: 'Download'}]"
+                              item-value="value"
+                              item-title="title"></v-select>
                   </v-col>
                   <v-col cols="12" sm="3" style="padding-right: 5px">
                     <span :style="isMobile?'font-size: 12px;':''">Áudio</span>
-                    <v-select :density="isMobile?'compact':'default'" v-model="filtros.audio" variant="solo-filled" :items="['Todos', 'Original (com legenda)', 'Dublado']"></v-select>
+                    <v-select :density="isMobile?'compact':'default'" v-model="filtros.audio" variant="solo-filled" :items="[{value: 1, title: 'Todos'}, {value: 2, title: 'Original (com legenda)'}, {value: 3, title: 'Dublado'}]"></v-select>
                   </v-col>
                   <v-col cols="12" sm="3">
                     <span :style="isMobile?'font-size: 12px;':''">Status</span>
-                    <v-select :density="isMobile?'compact':'default'" v-model="filtros.pesquisaStatus" variant="solo-filled" :items="['Todos', 'Em Lançamento', 'Completo', 'Aguardando Lançamento']"></v-select>
+                    <v-select :density="isMobile?'compact':'default'" v-model="filtros.pesquisaStatus" variant="solo-filled" item-title="title" item-value="value" :items="[{ value: 0, title: 'Todos' }, { value: 1, title: 'Completo' }, { value: 2, title: 'Em Lançamento' }, { value: 3, title: 'Aguardando Lançamento' }]"></v-select>
                   </v-col>
                 </v-row>
                 <div class="generos">
@@ -266,12 +268,13 @@ export default {
         conditions.push('letra=' + this.filtros.letra);
       }
       if(this.filtros.ano){
-        conditions.push('ano=' + this.filtros.ano);
+        conditions.push('ano=' + this.filtros.ano.value);
       }
       if(this.filtros.generos){
         conditions.push('generos=' + this.filtros.generos.join(','));
       }
       if(this.filtros.pesquisaStatus){
+        console.log(this.filtros.pesquisaStatus);
         conditions.push('status=' + this.filtros.pesquisaStatus);
       }
       if(this.filtros.audio){
@@ -289,6 +292,8 @@ export default {
           this.paginatorSearch.animes = value.data.animes;
           this.paginatorSearch.total = value.data.total;
           this.filtros.enabled = true;
+          this.paginatorSearch.pagina = 1;
+          this.paginator.pagina = 1;
           this.filtrosDialog = false;
         }
       }).finally(() => {
@@ -296,6 +301,8 @@ export default {
       });
     },
     resetarBuscas(){
+      this.limparFiltros();
+
       this.paginatorSearch.pagina = 1;
       this.paginatorSearch.animes = [];
       this.paginatorSearch.total = 0;
