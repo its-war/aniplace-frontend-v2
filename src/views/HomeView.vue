@@ -21,10 +21,10 @@
         @click.left="goRoute('Animes', {pagina: 1})">Animes</v-btn>
 
       <v-btn
-        v-show="false"
         tag="a"
-        @click.middle.prevent="abrirNovaAba('/feed/')"
-        @click.left="goRoute('Feed')">Feed</v-btn><!-- v-show="!isMobile" -->
+        v-show="!isMobile"
+        @click.middle.prevent="abrirNovaAba('/feed')"
+        @click.left="goRoute('Feed')">Feed</v-btn>
 
       <v-btn
         v-if="isAdmin"
@@ -38,6 +38,9 @@
         <v-icon v-else icon="mdi-account"/>
         <v-menu activator="parent">
           <v-list v-if="isLogged">
+            <v-list-item @click="goRoute('Perfil')">
+              <v-list-item-title>Perfil</v-list-item-title>
+            </v-list-item>
             <v-list-item @click="logout">
               <v-list-item-title>Sair</v-list-item-title>
             </v-list-item>
@@ -119,6 +122,7 @@
             ></v-list-item>
           </template>
 
+          <v-list-item v-if="isLogged" @click="goRoute('Perfil')" prepend-icon="mdi-account" title="Perfil" value="perfil"></v-list-item>
           <v-list-item v-if="isLogged" @click="logout" prepend-icon="mdi-location-exit" title="Sair" value="sair"></v-list-item>
 
           <v-list-item v-if="!isLogged" @click="goRoute('Login')" prepend-icon="mdi-login" title="Login" value="login"></v-list-item>
@@ -144,7 +148,12 @@
         title="Animes"
         value="animes"></v-list-item>
 
-      <v-list-item v-if="false" prepend-icon="mdi-note-text" title="Feed" value="feed"></v-list-item>
+      <v-list-item
+        @click="goRoute('Feed')"
+        @click.middle.prevent="abrirNovaAba('/feed')"
+        prepend-icon="mdi-note-text"
+        title="Feed"
+        value="feed"></v-list-item>
 
       <v-list-group value="Admin" v-if="isAdmin">
         <template v-slot:activator="{props}">
@@ -203,7 +212,6 @@
                   v-on:keydown.enter="search(mobileSearch)"
     ></v-text-field>
   </v-navigation-drawer>
-  <div class="dispachar-click" style="display: none"></div>
   <router-view v-slot="{Component}">
     <transition @enter="fadeIn" @leave="fadeOut">
       <component :is="Component"/>

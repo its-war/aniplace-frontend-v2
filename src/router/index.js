@@ -17,6 +17,8 @@ import AnimeAddTemporadaForm from "@/admin/components/anime/AnimeAddTemporadaFor
 import AnimeAddEpisodioComponent from "@/admin/components/anime/AnimeAddEpisodioComponent.vue";
 import EditarEpisodioComponent from "@/admin/components/anime/EditarEpisodioComponent.vue";
 import VerTodosComponent from "@/components/globalComponents/VerTodosComponent.vue";
+import UserPerfilComponent from "@/pages/UserPerfilComponent.vue";
+import FeedPage from "@/pages/FeedPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -107,6 +109,16 @@ const router = createRouter({
           props: {
             isAnime: true
           }
+        },
+        {
+          path: 'user/perfil',
+          name: 'Perfil',
+          component: UserPerfilComponent
+        },
+        {
+          path: 'feed',
+          name: 'Feed',
+          component: FeedPage
         }
       ]
     },
