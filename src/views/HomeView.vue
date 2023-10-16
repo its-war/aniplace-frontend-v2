@@ -98,7 +98,7 @@
       </div>
     </template>
   </v-app-bar>
-  <v-navigation-drawer v-model="activeDrawer" :rail="onAdminPage" :expand-on-hover="onAdminPage" class="drawer-mobile">
+  <v-navigation-drawer :scrim="false" v-model="activeDrawer" :rail="onAdminPage" :expand-on-hover="onAdminPage" class="drawer-mobile">
 
     <template v-slot:prepend>
       <v-list density="compact">
@@ -212,11 +212,13 @@
                   v-on:keydown.enter="search(mobileSearch)"
     ></v-text-field>
   </v-navigation-drawer>
-  <router-view v-slot="{Component}">
-    <transition @enter="fadeIn" @leave="fadeOut">
-      <component :is="Component"/>
-    </transition>
-  </router-view>
+  <div class="body-event-click">
+    <router-view v-slot="{Component}">
+      <transition @enter="fadeIn" @leave="fadeOut">
+        <component :is="Component"/>
+      </transition>
+    </router-view>
+  </div>
   <FooterComponent/>
 </template>
 
@@ -345,6 +347,11 @@ export default {
         }
       });
     }
+
+    let body = document.querySelector('.body-event-click');
+    body.addEventListener('click', () => {
+      this.menuMobile = false;
+    });
   }
 }
 </script>
