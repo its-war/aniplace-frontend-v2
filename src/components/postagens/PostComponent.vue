@@ -148,6 +148,9 @@ export default {
       }).then((response) => {
         if(!response.data.erro){
           this.$emit('hasCurtir', response.data.curtiu, this.$props.idPostagem);
+          if(response.data.curtiu){
+            this.$socket.emit('userActivity', this.$store.user.getIdUser);
+          }
         }
       }).finally(() => {
         this.loadingCurtir = false;

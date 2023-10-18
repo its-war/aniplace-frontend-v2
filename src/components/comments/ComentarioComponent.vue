@@ -163,6 +163,9 @@ export default {
       }).then((response) => {
         if(!response.data.erro){
           this.$emit('hasCurtida', response.data.curtir, this.$props.idComentario);
+          if(response.data.curtir){
+            this.$socket.emit('userActivity', this.$store.user.getIdUser);
+          }
         }
       });
     },
@@ -177,6 +180,7 @@ export default {
             this.respostas.push(response.data.resposta);
             this.textResposta = '';
             this.showRespostas = true;
+            this.$socket.emit('userActivity', this.$store.user.getIdUser);
           }
         }).finally(() => {
           this.loading = false;

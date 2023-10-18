@@ -102,6 +102,9 @@ export default {
             this.episodio = response.data.episodio;
             this.$socket.emit('acessoAnime', this.episodio.anime.idAnime);
             this.$socket.emit('acessoEpisodio', this.$route.params.idAnime, this.$route.params.numero, this.$route.params.temporada);
+            if(this.$store.user.getIdUser > 0){
+              this.$socket.emit('userActivity', this.$store.user.getIdUser);
+            }
             document.title = this.episodio.anime.nome + ' - ' + this.$route.params.temporada + 'ª Temporada, episódio ' + this.$route.params.numero + ' — Aniplace';
           }
         }).finally(() => {

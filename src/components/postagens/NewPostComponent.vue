@@ -103,6 +103,7 @@ export default {
             this.img = null;
             this.imgPreview = null;
             this.$emit('newPost', response.data.post);
+            this.$socket.emit('userActivity', this.$store.user.getIdUser);
           }
         }).finally(() => {
           this.loading = false;

@@ -55,6 +55,7 @@ export default {
           if(response.data.comentario){
             this.$emit('hasNewComment', response.data.comentario);
             this.texto = '';
+            this.$socket.emit('userActivity', this.$store.user.getIdUser);
           }
         }).finally(() => {
           this.loading = false;

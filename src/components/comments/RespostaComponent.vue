@@ -106,6 +106,9 @@ export default {
       }).then((response) => {
         if(!response.data.erro){
           this.$emit('hasCurtida', response.data.curtir, this.$props.idResposta);
+          if(response.data.curtir){
+            this.$socket.emit('userActivity', this.$store.user.getIdUser);
+          }
         }
       });
     },
