@@ -29,7 +29,7 @@ export default {
     isActive(){
       if(this.$store.main.isLogged){
         let rank = this.$store.user.getRanking;
-        return this.$store.main.getAdsActive && rank > 5;
+        return this.$store.main.getAdsActive && rank < 5;
       }
       return this.$store.main.getAdsActive;
     }
