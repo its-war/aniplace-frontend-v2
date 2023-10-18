@@ -4,17 +4,24 @@
       <section class="posts">
         <PostagensComponent/>
       </section>
-      <aside class="aside-post"></aside>
+      <aside class="aside-post">
+        <TopUsersComponent/>
+        <div class="text-center" style="margin-top: 20px">
+          <AdsComponent :vertical="true"/>
+        </div>
+      </aside>
     </div>
   </v-main>
 </template>
 
 <script>
 import PostagensComponent from "@/components/postagens/PostagensComponent.vue";
+import TopUsersComponent from "@/components/globalComponents/TopUsersComponent.vue";
+import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 export default {
   name: "FeedPage",
-  components: { PostagensComponent }
-};
+  components: { AdsComponent, TopUsersComponent, PostagensComponent }
+}
 </script>
 
 <style scoped>
@@ -32,5 +39,6 @@ export default {
 
 .aside-post {
   grid-area: aside;
+  padding: 50px 10px 10px;
 }
 </style>
