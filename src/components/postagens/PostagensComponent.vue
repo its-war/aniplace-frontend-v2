@@ -11,7 +11,7 @@
                  :registro="post.registro"
                  :user="post.user"
                  :curtidas="post.curtidas"
-                 @hasCurtir="curtirPostEvent"
+                 @hasCurtir="curtirNewPostEvent"
                  @hasDeletePost="deletePost"
   />
 
@@ -93,6 +93,21 @@ export default {
           }else{
             this.postagens[i].curtidas.total = this.postagens[i].curtidas.total - 1;
             this.postagens[i].curtidas.users = this.postagens[i].curtidas.users.filter(
+              id => id !== this.$store.user.getIdUser
+            );
+          }
+        }
+      }
+    },
+    curtirNewPostEvent(curtiu, idPostagem){
+      for (let i = 0; i < this.newPosts.length; i++) {
+        if(this.newPosts[i].idPostagem === idPostagem){
+          if(curtiu){
+            this.newPosts[i].curtidas.total = this.newPosts[i].curtidas.total + 1;
+            this.newPosts[i].curtidas.users.push(this.$store.user.getIdUser);
+          }else{
+            this.newPosts[i].curtidas.total = this.newPosts[i].curtidas.total - 1;
+            this.newPosts[i].curtidas.users = this.newPosts[i].curtidas.users.filter(
               id => id !== this.$store.user.getIdUser
             );
           }
