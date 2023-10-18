@@ -112,6 +112,11 @@ const router = createRouter({
         },
         {
           path: 'user/perfil',
+          name: 'Meu Perfil',
+          component: UserPerfilComponent
+        },
+        {
+          path: 'user/perfil/:id',
           name: 'Perfil',
           component: UserPerfilComponent
         },

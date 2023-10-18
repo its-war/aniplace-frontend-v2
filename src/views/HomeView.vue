@@ -38,7 +38,7 @@
         <v-icon v-else icon="mdi-account"/>
         <v-menu activator="parent">
           <v-list v-if="isLogged">
-            <v-list-item @click="goRoute('Perfil')">
+            <v-list-item @click="goRoute('Meu Perfil')">
               <v-list-item-title>Perfil</v-list-item-title>
             </v-list-item>
             <v-list-item @click="logout">
@@ -122,7 +122,7 @@
             ></v-list-item>
           </template>
 
-          <v-list-item v-if="isLogged" @click="goRoute('Perfil')" prepend-icon="mdi-account" title="Perfil" value="perfil"></v-list-item>
+          <v-list-item v-if="isLogged" @click="goRoute('Meu Perfil')" prepend-icon="mdi-account" title="Perfil" value="perfil"></v-list-item>
           <v-list-item v-if="isLogged" @click="logout" prepend-icon="mdi-location-exit" title="Sair" value="sair"></v-list-item>
 
           <v-list-item v-if="!isLogged" @click="goRoute('Login')" prepend-icon="mdi-login" title="Login" value="login"></v-list-item>
