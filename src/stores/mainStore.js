@@ -9,7 +9,8 @@ export default defineStore('main', {
         animeList: [],
         totalPages: 1,
         tituloVerTodos: '',
-        adsActive: true
+        adsActive: true,
+        lastRoutePath: ''
     }),
     getters: {
         getAdblockValue: (state) => {
@@ -35,6 +36,9 @@ export default defineStore('main', {
         },
         getAdsActive: (state) => {
             return state.adsActive;
+        },
+        getLastRoutePath: (state) => {
+            return state.lastRoutePath;
         }
     },
     actions: {
@@ -87,6 +91,9 @@ export default defineStore('main', {
         },
         setAdsActive(value){
             this.adsActive = value;
+        },
+        setLastRoutePath(value){
+            this.lastRoutePath = value;
         }
     }
 });

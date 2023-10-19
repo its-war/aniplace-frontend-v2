@@ -115,7 +115,13 @@ export default {
             this.$store.user.setUser(value.data.userBasicData);
             localStorage.setItem('userdata', value.data.userdata);
             localStorage.setItem('router-verify-data', value.data.tokenRouterVerify);
-            this.$router.push({name: 'Home'});
+            if(this.$store.main.getLastRoutePath !== ''){
+              this.$router.push(this.$store.main.getLastRoutePath).then(() => {
+                this.$store.main.setLastRoutePath('');
+              });
+            }else{
+              this.$router.push({name: 'Home'});
+            }
           }else{
             if(typeof value.data.error === 'string'){
               this.snackbarText = value.data.error;

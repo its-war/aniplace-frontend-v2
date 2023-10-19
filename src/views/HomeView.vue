@@ -281,6 +281,9 @@ export default {
   }),
   methods: {
     goRoute(nomeRota, params = false){
+      if(nomeRota === 'Login' || nomeRota === 'Cadastro'){
+        this.$store.main.setLastRoutePath(this.$route.path);
+      }
       this.pesquisa.painel = false;
       this.pesquisa.resultado = [];
       this.pesquisa.text = '';
