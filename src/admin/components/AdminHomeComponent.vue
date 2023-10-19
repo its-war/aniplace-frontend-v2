@@ -49,10 +49,10 @@
             <v-toolbar-title>Ultimos Animes</v-toolbar-title>
           </v-toolbar>
         </template>
-        <template v-slot:item.nome="{item}"><span @click="goAnime(item.columns.idAnime)" class="link-nome" :title="item.columns.nome">{{$limitarTexto(item.columns.nome, 22)}}</span></template>
-        <template v-slot:item.dia="{item}">{{semana[item.columns.dia - 1]}}</template>
-        <template v-slot:item.status="{item}">{{status[item.columns.status - 1]}}</template>
-        <template v-slot:item.acessos="{item}"><ViewCountComponent :views="item.columns.acessos" :short="true"/></template>
+        <template v-slot:item.nome="{item}"><span @click="goAnime(item.idAnime)" class="link-nome" :title="item.nome">{{$limitarTexto(item.nome, 22)}}</span></template>
+        <template v-slot:item.dia="{item}">{{semana[item.dia - 1]}}</template>
+        <template v-slot:item.status="{item}">{{status[item.status - 1]}}</template>
+        <template v-slot:item.acessos="{item}"><ViewCountComponent :views="item.acessos" :short="true"/></template>
       </v-data-table>
 
       <v-data-table style="margin-top: 10px"
@@ -68,9 +68,9 @@
             <v-toolbar-title>Ultimos Usuários</v-toolbar-title>
           </v-toolbar>
         </template>
-        <template v-slot:item.nome="{item}">{{$limitarTexto(item.columns.nome, 22)}}</template>
-        <template v-slot:item.email="{item}"><span :title="item.columns.email">{{$limitarTexto(item.columns.email, 20)}}</span></template>
-        <template v-slot:item.ranking="{item}">{{rankings[item.columns.ranking - 1]}}</template>
+        <template v-slot:item.nome="{item}">{{$limitarTexto(item.nome, 22)}}</template>
+        <template v-slot:item.email="{item}"><span :title="item.email">{{$limitarTexto(item.email, 20)}}</span></template>
+        <template v-slot:item.ranking="{item}">{{rankings[item.ranking - 1]}}</template>
       </v-data-table>
     </div>
   </div>
@@ -184,6 +184,7 @@ export default {
     carregarAnimes(){
       this.axios.get('admin/anime/getUltimosAnimes').then((response) => {
         this.dados.animes.list = response.data.animes;
+        console.log(this.dados.animes.list);
       });
     },
     carregarUsers(){
