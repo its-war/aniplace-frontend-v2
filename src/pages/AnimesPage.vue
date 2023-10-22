@@ -220,7 +220,7 @@ export default {
     },
     removerSelecaoLetra(){
       for(let i = 0; i < 27; i++){
-        document.getElementById('letra' + i).setAttribute('style', '');
+        document.getElementById('letra' + i)?.setAttribute('style', '');
       }
       this.filtros.letra = null;
     },
