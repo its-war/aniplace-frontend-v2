@@ -94,6 +94,23 @@ export default defineStore('main', {
         },
         setLastRoutePath(value){
             this.lastRoutePath = value;
+        },
+        getUserPerfil(idUser){
+            return new Promise((resolve, reject) => {
+                window._axios.get('user/getPublicPerfil', {
+                    params: {
+                        idUser: idUser
+                    }
+                }).then((response) => {
+                    if(response.data.user){
+                        resolve(response.data.user);
+                    }else{
+                        resolve(null);
+                    }
+                }).catch(() => {
+                    resolve(null);
+                });
+            });
         }
     }
 });

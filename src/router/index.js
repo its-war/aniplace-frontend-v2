@@ -180,6 +180,9 @@ router.beforeEach(async (to, from, next) => {
       try{
         let userdata = await main.getLogin();
         user.setUser(userdata);
+
+        let userPerfil = await main.getUserPerfil(user.getIdUser);
+        user.setUserPerfil(userPerfil);
       }catch {
         console.log('Erro na requisição.');
       }

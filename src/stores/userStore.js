@@ -6,7 +6,8 @@ export default defineStore('user', {
         nome: '',
         ranking: 0,
         foto: '',
-        userdata: {}
+        userdata: {},
+        userPerfil: null
     }),
     getters: {
         getIdUser: (state) => {
@@ -29,6 +30,9 @@ export default defineStore('user', {
         },
         getUserdata: (state) => {
             return state.userdata;
+        },
+        getUserPerfil: (state) => {
+            return state.userPerfil;
         }
     },
     actions: {
@@ -52,6 +56,9 @@ export default defineStore('user', {
         },
         setUserdata(user){
             this.userdata = user;
+        },
+        setUserPerfil(user){
+            this.userPerfil = user;
         }
     }
 });
