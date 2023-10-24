@@ -212,6 +212,8 @@ router.beforeEach(async (to, from, next) => {
   }else{
     if(rota === 'admin'){
       next({name: 'Home'});
+    }else if(to.name === 'Meu Perfil'){
+      next({name: 'Home'});
     }else{
       next();
     }

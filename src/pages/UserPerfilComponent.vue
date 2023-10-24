@@ -4,13 +4,15 @@
       <div class="perfil-header" style="height: 500px;"
            @mouseout="showEditCapa = false"
            @mouseover="showEditCapa = true">
-        <v-img v-if="user.capa" :src="getImg" height="500px" width="100%" :cover="true" />
+        <v-img v-if="user.capa" :src="$getImg(user.capa, 'user/capa')" height="500px" width="100%" :cover="true" />
         <Transition>
           <v-progress-linear :indeterminate="true" color="red" v-if="loading.capa" />
         </Transition>
         <Transition>
           <v-btn v-show="showEditCapa"
                  icon="mdi-pencil"
+                 @click="dialog.capa.active = true"
+                 v-if="isLogged && $store.user.getIdUser === user.idUser"
                  :flat="true"
                  :style="user.capa ? 'bottom: 20px' : 'bottom: 260px'"
                  style="position: absolute; right: 20px" />
@@ -23,7 +25,8 @@
             size="300px" style="border: 2px solid red">
             <v-img :src="$getImg(user.foto, 'user/foto')" :cover="true" width="300px" height="300px" aspect-ratio="1" />
             <Transition>
-              <v-btn v-show="showEditFoto" icon="mdi-pencil" :flat="true" @click="dialog.foto.active = true"
+              <v-btn v-show="showEditFoto" v-if="isLogged && $store.user.getIdUser === user.idUser" icon="mdi-pencil"
+                     :flat="true" @click="dialog.foto.active = true"
                      style="position: absolute; top: 80px; right: 15px" />
             </Transition>
           </v-avatar>
@@ -41,7 +44,8 @@
             </Transition>
             <span class="text-h1">{{ userIniciais }}</span>
             <Transition>
-              <v-btn v-show="showEditFoto" icon="mdi-pencil" :flat="true" @click="dialog.foto.active = true"
+              <v-btn v-show="showEditFoto" v-if="isLogged && $store.user.getIdUser === user.idUser" icon="mdi-pencil"
+                     :flat="true" @click="dialog.foto.active = true"
                      style="position: absolute; top: 80px; right: 15px" />
             </Transition>
           </v-avatar>
@@ -117,7 +121,7 @@
         </div>
       </div>
       <div class="perfil-footer">
-        <v-dialog v-model="dialog.foto.active" width="65%">
+        <v-dialog v-if="isLogged" v-model="dialog.foto.active" width="65%">
           <v-card width="100%" style="padding: 20px">
             <v-card-text>
               <div class="campo-fotoPreview" style="position: relative">
@@ -147,13 +151,61 @@
                   {{ $limitarTexto(dialog.foto.img[0].name, 25) }}
                 </template>
               </v-file-input>
-              <h3 style="color: red" v-if="dialog.foto.uploadErro.length > 0">{{dialog.foto.uploadErro}}</h3>
+              <h3 style="color: #007bff">Recomendado: 500x500px</h3>
+              <h3 style="color: red" v-if="dialog.foto.uploadErro.length > 0">{{ dialog.foto.uploadErro }}</h3>
             </v-card-text>
-            <v-card-actions>
-              <v-spacer />
-              <v-btn variant="tonal" @click="uploadFoto" color="success" append-icon="mdi-upload"
-                     text="Atualizar Foto" />
-            </v-card-actions>
+            <Transition>
+              <v-card-actions v-if="dialog.foto.img">
+                <v-spacer />
+                <v-btn variant="tonal" @click="uploadFoto" :loading="dialog.foto.loading"
+                       color="success" append-icon="mdi-upload"
+                       text="Atualizar Foto" />
+              </v-card-actions>
+            </Transition>
+          </v-card>
+        </v-dialog>
+
+        <v-dialog v-if="isLogged" v-model="dialog.capa.active" width="65%">
+          <v-card width="100%" style="padding: 20px">
+            <v-card-text>
+              <div class="campo-fotoPreview" style="position: relative">
+                <v-img v-if="dialog.capa.preview"
+                       width="75%"
+                       style="margin: auto; border-radius: 10px"
+                       aspect-ratio="16/9"
+                       :src="dialog.capa.preview"
+                       :cover="true" />
+                <v-btn v-if="dialog.capa.preview"
+                       icon="mdi-close"
+                       :flat="true"
+                       @click="resetarCapa"
+                       style="position: absolute; top: 0; right: 0" />
+              </div>
+
+              <v-file-input @change="handleCapaChange"
+                            v-show="!dialog.capa.preview"
+                            v-model="dialog.capa.img"
+                            accept="image/*"
+                            v-on:click:clear="resetarCapa"
+                            label="Selecione uma imagem para adicionar ao seu perfil como capa"
+                            base-color="info"
+                            color="info"
+                            variant="outlined">
+                <template v-slot:selection>
+                  {{ $limitarTexto(dialog.capa.img[0].name, 25) }}
+                </template>
+              </v-file-input>
+              <h3 style="color: #007bff">Recomendado: 950x500px</h3>
+              <h3 style="color: red" v-if="dialog.capa.uploadErro.length > 0">{{ dialog.capa.uploadErro }}</h3>
+            </v-card-text>
+            <Transition>
+              <v-card-actions v-if="dialog.capa.img">
+                <v-spacer />
+                <v-btn variant="tonal" @click="uploadCapa" :loading="dialog.capa.loading"
+                       color="success" append-icon="mdi-upload"
+                       text="Atualizar Foto" />
+              </v-card-actions>
+            </Transition>
           </v-card>
         </v-dialog>
       </div>
@@ -239,6 +291,9 @@ export default {
         return this.status[this.user.status - 1];
       }
       return false;
+    },
+    isLogged() {
+      return this.$store.main.isLogged;
     }
   },
   data: () => ({
@@ -295,26 +350,30 @@ export default {
         active: false,
         img: null,
         preview: null,
-        uploadErro: ''
+        uploadErro: "",
+        loading: false
       },
       capa: {
         active: false,
         img: null,
-        preview: null
+        preview: null,
+        uploadErro: "",
+        loading: false
       }
     }
   }),
-  mounted() {
+  async mounted() {
     //this.loading.info = true;
     if (this.$route.params.id) {
-      //fazer requisição do perfil
+      this.user = await this.$store.main.getUserPerfil(this.$route.params.id);
+      this.loading.info = false;
+      this.loading.foto = false;
+      this.loading.capa = false;
     } else {
-      setTimeout(() => {
-        this.loading.info = false;
-        this.loading.foto = false;
-        this.loading.capa = false;
-        this.user = this.$store.user.getUserPerfil;
-      }, 2500);
+      this.loading.info = false;
+      this.loading.foto = false;
+      this.loading.capa = false;
+      this.user = this.$store.user.getUserPerfil;
     }
   },
   methods: {
@@ -333,9 +392,21 @@ export default {
         this.dialog.foto.preview = null;
       }
     },
+    handleCapaChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        this.dialog.capa.preview = URL.createObjectURL(file);
+      } else {
+        this.dialog.capa.preview = null;
+      }
+    },
     resetarFoto() {
       this.dialog.foto.img = null;
       this.dialog.foto.preview = null;
+    },
+    resetarCapa() {
+      this.dialog.capa.img = null;
+      this.dialog.capa.preview = null;
     },
     uploadFoto() {
       if (this.dialog.foto.img) {
@@ -346,10 +417,29 @@ export default {
             "Content-Type": "multipart/form-data"
           }
         }).then((response) => {
-          if(response.data.foto){
+          if (response.data.foto) {
             this.user.foto = response.data.foto;
+            this.$store.user.setFoto(response.data.foto);
             this.resetarFoto();
             this.dialog.foto.active = false;
+          }
+        });
+      }
+    },
+    uploadCapa() {
+      if (this.dialog.capa.img) {
+        const form = new FormData();
+        form.append("capa", this.dialog.capa.img[0]);
+        this.axios.post("user/setCapa", form, {
+          headers: {
+            "Content-Type": "multipart/form-data"
+          }
+        }).then((response) => {
+          if (response.data.capa) {
+            this.user.capa = response.data.capa;
+            this.$store.user.setFoto(response.data.capa);
+            this.resetarCapa();
+            this.dialog.capa.active = false;
           }
         });
       }

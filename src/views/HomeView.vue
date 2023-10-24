@@ -327,9 +327,10 @@ export default {
         if(response.data.logout){
           this.$store.main.setLogin(false);
           this.$store.user.setUserdata(response.data.userBasicData);
+          this.$store.user.setUserPerfil(null);
           localStorage.setItem('userdata', '');
           localStorage.setItem('router-verify-data', '');
-          if(this.$route.path.split('/')[1] === 'admin'){
+          if(this.$route.path.split('/')[1] === 'admin' || this.$route.name === 'Meu Perfil'){
             this.$router.push({name: 'Home'});
           }
         }

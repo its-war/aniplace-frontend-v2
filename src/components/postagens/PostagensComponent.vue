@@ -1,6 +1,7 @@
 <template>
   <NewPostComponent
     v-if="isLogged"
+    :id-user="$props.idUser ?? null"
     @newPost="hasNewPost"
   />
 

@@ -1,5 +1,8 @@
 <template>
-  <v-btn @click="activeForm = !activeForm" :text="activeForm?'Ocultar':'Nova Postagem'" :prepend-icon="activeForm?'mdi-minus':'mdi-plus'" color="info" variant="outlined"/>
+  <div v-if="$props.idUser">
+    <v-btn v-if="$store.user.getIdUser === $props.idUser" @click="activeForm = !activeForm" :text="activeForm?'Ocultar':'Nova Postagem'" :prepend-icon="activeForm?'mdi-minus':'mdi-plus'" color="info" variant="outlined"/>
+  </div>
+  <v-btn v-else @click="activeForm = !activeForm" :text="activeForm?'Ocultar':'Nova Postagem'" :prepend-icon="activeForm?'mdi-minus':'mdi-plus'" color="info" variant="outlined"/>
 
   <Transition>
     <div v-if="activeForm">
@@ -111,7 +114,13 @@ export default {
       }
     }
   },
-  emits: ['newPost']
+  emits: ['newPost'],
+  props: {
+    idUser: {
+      type: Number,
+      default: null
+    }
+  }
 }
 </script>
 
