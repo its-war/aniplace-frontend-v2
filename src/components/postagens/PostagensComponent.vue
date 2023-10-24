@@ -74,7 +74,8 @@ export default {
         this.loadingPage = true;
         this.axios.get('post/getPostagens', {
           params: {
-            pagina: this.paginator.pagina
+            pagina: this.paginator.pagina,
+            idUser: this.$props.idUser ?? 0
           }
         }).then((response) => {
           this.postagens = this.postagens.concat(response.data.postagens);
@@ -119,7 +120,6 @@ export default {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
 
-      // Verifique se o usuário rolou próximo ao final da página
       if (scrollY + windowHeight + 200 >= documentHeight) {
         this.carregarPosts();
       }
@@ -132,6 +132,12 @@ export default {
   mounted() {
     this.carregarPosts();
     window.addEventListener("scroll", this.onScroll);
+  },
+  props: {
+    idUser: {
+      type: Number,
+      default: null
+    }
   }
 }
 </script>
