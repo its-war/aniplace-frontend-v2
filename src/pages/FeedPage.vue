@@ -1,10 +1,10 @@
 <template>
   <v-main style="margin-top: 15px">
-    <div class="feed-page">
+    <div class="feed-page" :style="isMobile? `grid-template-areas: 'post post post'; width: 90%` : ''">
       <section class="posts">
         <PostagensComponent/>
       </section>
-      <aside class="aside-post">
+      <aside class="aside-post" v-if="!isMobile">
         <TopUsersComponent/>
         <div class="text-center" style="margin-top: 20px">
           <AdsComponent :vertical="true"/>
@@ -20,7 +20,12 @@ import TopUsersComponent from "@/components/globalComponents/TopUsersComponent.v
 import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 export default {
   name: "FeedPage",
-  components: { AdsComponent, TopUsersComponent, PostagensComponent }
+  components: { AdsComponent, TopUsersComponent, PostagensComponent },
+  computed: {
+    isMobile(){
+      return this.$store.main.isMobile;
+    }
+  }
 }
 </script>
 

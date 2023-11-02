@@ -3,8 +3,9 @@
     <div class="user-info">
       <img v-if="$props.user.foto" :src="$getImg($props.user.foto, 'user/foto')"
            alt="Foto do Usuário" class="user-image"
+           @click="goUser"
            :style="isMobile?'width: 30px; height: 30px':''">
-      <div class="user" :style="isMobile?'font-size: 11px':''">{{$props.user.nome}}</div>
+      <div class="user" @click="goUser" :style="isMobile?'font-size: 11px':''">{{$props.user.nome}}</div>
       <div class="timestamp" :style="isMobile?'font-size: 8px':''">{{$props.editado ? '(editado) - ' : ''}}{{getTime}}</div>
     </div>
     <div class="comment-text" :style="isMobile?'font-size: 10px; padding-left: 0':''">
@@ -258,6 +259,13 @@ export default {
     },
     removerResposta(idResposta){
       this.respostas = this.respostas.filter(r => r.idResposta !== idResposta);
+    },
+    goUser(){
+      if(this.$props.user.idUser === this.$store.user.getIdUser){
+        this.$router.push({name: 'Meu Perfil'});
+      }else{
+        this.$router.push({name: 'Perfil', params: {id: this.$props.user.idUser}});
+      }
     }
   },
   props: {
@@ -355,7 +363,13 @@ export default {
 .comment .user-info .user {
   font-weight: bold;
   margin-top: 10px;
+  cursor: pointer;
 }
+
+.comment .user-info .user:hover {
+  text-decoration: underline;
+}
+
 .comment .user-info .timestamp {
   font-size: 12px;
   position: absolute;
@@ -372,6 +386,7 @@ export default {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  cursor: pointer;
 }
 /* Estilos para os botões */
 .comment .actions {

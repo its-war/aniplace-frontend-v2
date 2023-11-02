@@ -2,8 +2,9 @@
   <div class="comment2" style="margin: auto" :style="isMobile?'width: 85%; padding: 10px':''">
     <div class="user-info">
       <img v-if="$props.user.foto" :src="$getImg($props.user.foto, 'user/foto')"
+           @click="goUser"
            alt="Foto do Usuário" class="user-image" :style="isMobile?'width: 20px; height: 20px':''">
-      <div class="user" :style="isMobile?'font-size: 9px; margin-top: 4px':''">{{$props.user.nome}}</div>
+      <div class="user" @click="goUser" :style="isMobile?'font-size: 9px; margin-top: 4px':''">{{$props.user.nome}}</div>
       <div class="timestamp" :style="isMobile?'font-size: 8px':''">{{$props.editado ? '(editado) - ' : ''}}{{getTime}}</div>
     </div>
     <div class="comment-text" :style="isMobile?'font-size: 10px':''">
@@ -147,6 +148,13 @@ export default {
           this.deletePainel = false;
         }
       });
+    },
+    goUser(){
+      if(this.$props.user.idUser === this.$store.user.getIdUser){
+        this.$router.push({name: 'Meu Perfil'});
+      }else{
+        this.$router.push({name: 'Perfil', params: {id: this.$props.user.idUser}});
+      }
     }
   },
   props: {
@@ -233,7 +241,13 @@ export default {
 .comment2 .user-info .user {
   font-weight: bold;
   margin-top: 10px;
+  cursor: pointer;
 }
+
+.comment2 .user-info .user:hover {
+  text-decoration: underline;
+}
+
 .comment2 .user-info .timestamp {
   font-size: 12px;
   position: absolute;
@@ -249,6 +263,7 @@ export default {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  cursor: pointer;
 }
 /* Estilos para os botões */
 .comment2 .actions button {

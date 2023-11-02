@@ -36,7 +36,7 @@
       <h2 :style="isMobile?'font-size: 14px':''" v-else>Ainda não há comentários.</h2>
     </div>
   </div>
-  <div class="text-center">
+  <div class="text-center" :style="isMobile?'overflow: hidden':''">
     <AdsComponent/>
   </div>
 </template>

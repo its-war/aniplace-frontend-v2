@@ -54,6 +54,9 @@ export default {
   computed: {
     isLogged(){
       return this.$store.main.isLogged;
+    },
+    isMobile(){
+      return this.$store.main.isMobile;
     }
   },
   methods: {
@@ -121,7 +124,7 @@ export default {
       const windowHeight = window.innerHeight;
       const documentHeight = document.documentElement.scrollHeight;
 
-      if (scrollY + windowHeight + 200 >= documentHeight) {
+      if (scrollY + windowHeight + (this.isMobile ? 400 : 200) >= documentHeight) {
         this.carregarPosts();
       }
     },
@@ -138,6 +141,15 @@ export default {
     idUser: {
       type: Number,
       default: null
+    }
+  },
+  watch: {
+    '$props.idUser'(){
+      this.newPosts = [];
+      this.postagens = [];
+      this.paginator.pagina = 0;
+      this.paginator.totalPaginas = 1;
+      this.carregarPosts();
     }
   }
 }

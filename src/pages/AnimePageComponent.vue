@@ -377,7 +377,6 @@ export default {
 
       this.axios.get('anime/listar?id=' + this.$route.params.id).then((value) => {
         this.anime = value.data[0];
-        this.$socket.emit('acessoAnime', value.data[0].idAnime);
         document.title = this.anime.nome + ' — Aniplace';
       });
     }

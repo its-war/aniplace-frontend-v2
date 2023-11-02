@@ -25,6 +25,7 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
 import '@mdi/font/css/materialdesignicons.css'
+import { pt } from 'vuetify/locale'
 
 const vuetify = createVuetify({
     components,
@@ -34,6 +35,10 @@ const vuetify = createVuetify({
     },
     theme: {
         defaultTheme: 'dark'
+    },
+    locale: {
+        locale: 'pt',
+        messages: {pt}
     }
 });
 

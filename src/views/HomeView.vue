@@ -326,6 +326,12 @@ export default {
       this.axios.get('user/logout').then((response) => {
         if(response.data.logout){
           this.$store.main.setLogin(false);
+          this.$store.user.setUser({
+            idUser: 0,
+            nome: '',
+            ranking: 0,
+            foto: ''
+          });
           this.$store.user.setUserdata(response.data.userBasicData);
           this.$store.user.setUserPerfil(null);
           localStorage.setItem('userdata', '');
@@ -413,6 +419,10 @@ export default {
 .btn-menu {
   width: 90%;
   margin: 7px auto;
+}
+
+#appbar:hover {
+  background-color: rgb(18,18,18) !important;
 }
 
 .appbar-transparent {

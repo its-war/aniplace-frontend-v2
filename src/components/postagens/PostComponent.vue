@@ -11,16 +11,16 @@
       </v-btn>
       <div class="postagem-header">
         <div class="usuario-info">
-          <img v-if="$props.user.foto" :src="$getImg($props.user.foto, 'user/foto')" alt="Foto do Usuário" class="foto-usuario">
-          <div class="nome-usuario">{{$props.user.nome}}</div>
+          <img :style="isMobile?'width: 25px; height: 25px':''" @click="goUser" v-if="$props.user.foto" :src="$getImg($props.user.foto, 'user/foto')" alt="Foto do Usuário" class="foto-usuario">
+          <div :style="isMobile?'font-size: 10px':''" class="nome-usuario" @click="goUser">{{$props.user.nome}}</div>
         </div>
-        <div v-if="user.idUser !== $store.user.getIdUser" style="margin-right: 0" class="postagem-data">{{getTime}}</div>
-        <div v-else class="postagem-data">{{getTime}}</div>
+        <div :style="isMobile?'font-size: 10px':''" v-if="user.idUser !== $store.user.getIdUser" style="margin-right: 0" class="postagem-data">{{getTime}}</div>
+        <div :style="isMobile?'font-size: 10px':''" v-else class="postagem-data">{{getTime}}</div>
       </div>
       <div class="postagem-conteudo">
-        <p>{{$props.texto}}</p>
+        <p :style="isMobile?'font-size: 12px':''">{{$props.texto}}</p>
         <!-- Se houver uma imagem na postagem, você pode adicioná-la aqui -->
-        <div class="img-container" v-if="$props.imagem">
+        <div :style="isMobile?'height: 150px':''" class="img-container" v-if="$props.imagem">
           <v-img @click="imgFull = true" class="img-post" cover aspect-ratio="16/9" :src="$getImg($props.imagem, 'post')" alt="Imagem da Postagem"/>
           <v-icon @click="imgFull = true" icon="mdi-arrow-expand" size="80" class="icon-img"/>
         </div>
@@ -36,8 +36,8 @@
           <v-icon icon="mdi-heart" color="red"/>{{$props.curtidas.total}}
         </span>
 
-        <v-btn v-if="!activeComments" @click="activeComments = true" prepend-icon="mdi-comment-text" text="Comentários" color="success" variant="text"></v-btn>
-        <v-btn v-if="activeComments" @click="activeComments = false" prepend-icon="mdi-comment-off" text="Ocultar Comentários" color="warning" variant="text"></v-btn>
+        <v-btn :style="isMobile?'font-size: 10px':''" v-if="!activeComments" @click="activeComments = true" prepend-icon="mdi-comment-text" text="Comentários" color="success" variant="text"></v-btn>
+        <v-btn :style="isMobile?'font-size: 10px':''" v-if="activeComments" @click="activeComments = false" prepend-icon="mdi-comment-off" text="Ocultar Comentários" color="warning" variant="text"></v-btn>
 
       </div>
 
@@ -167,6 +167,13 @@ export default {
           this.$emit('hasDeletePost', this.$props.idPostagem);
         }
       });
+    },
+    goUser(){
+      if(this.$props.user.idUser === this.$store.user.getIdUser){
+        this.$router.push({name: 'Meu Perfil'});
+      }else{
+        this.$router.push({name: 'Perfil', params: {id: this.$props.user.idUser}});
+      }
     }
   },
   emits: ['hasCurtir', 'hasDeletePost']
@@ -201,10 +208,16 @@ export default {
   height: 40px;
   border-radius: 50%;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .nome-usuario {
   font-weight: bold;
+  cursor: pointer;
+}
+
+.nome-usuario:hover {
+  text-decoration: underline;
 }
 
 .postagem-data {
