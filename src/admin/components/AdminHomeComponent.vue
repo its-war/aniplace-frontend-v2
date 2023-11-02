@@ -184,7 +184,6 @@ export default {
     carregarAnimes(){
       this.axios.get('admin/anime/getUltimosAnimes').then((response) => {
         this.dados.animes.list = response.data.animes;
-        console.log(this.dados.animes.list);
       });
     },
     carregarUsers(){
