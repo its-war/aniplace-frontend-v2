@@ -165,24 +165,25 @@
                        style="position: absolute; top: 0; right: 0" />
               </div>
 
-              <v-row :no-gutters="true">
-                <v-col sm="12">
-                  <v-file-input @change="handleFotoChange"
-                                v-show="!dialog.foto.preview"
-                                v-model="dialog.foto.img"
-                                accept="image/*"
-                                v-on:click:clear="resetarFoto"
-                                label="Selecione uma imagem para adicionar ao seu perfil"
-                                base-color="info"
-                                color="info"
-                                variant="outlined">
-                    <template v-slot:selection>
-                      {{ $limitarTexto(dialog.foto.img[0].name, 25) }}
-                    </template>
-                  </v-file-input>
-                </v-col>
-              </v-row>
-              <h3 style="color: #007bff">Recomendado: 500x500px</h3>
+              <v-file-input @change="handleFotoChange"
+                            v-show="!dialog.foto.preview && !isMobile"
+                            v-model="dialog.foto.img"
+                            accept="image/*"
+                            ref="fotoUpload"
+                            v-on:click:clear="resetarFoto"
+                            label="Selecione uma imagem para adicionar ao seu perfil"
+                            base-color="info"
+                            color="info"
+                            variant="outlined">
+                <template v-slot:selection>
+                  {{ $limitarTexto(dialog.foto.img[0].name, 25) }}
+                </template>
+              </v-file-input>
+              <div class="text-center">
+                <v-btn v-show="isMobile" @click="openFotoUpload" color="info" text="Selecionar Foto" append-icon="mdi-image-outline"/>
+              </div>
+
+              <h3 style="color: #007bff" :style="isMobile?'font-size: 12px; margin-top: 5px; text-align: center':''">Recomendado: 500x500px</h3>
               <h3 style="color: red" v-if="dialog.foto.uploadErro.length > 0">{{ dialog.foto.uploadErro }}</h3>
             </v-card-text>
             <Transition>
@@ -214,8 +215,9 @@
               </div>
 
               <v-file-input @change="handleCapaChange"
-                            v-show="!dialog.capa.preview"
+                            v-show="!dialog.capa.preview && !isMobile"
                             v-model="dialog.capa.img"
+                            ref="capaUpload"
                             accept="image/*"
                             v-on:click:clear="resetarCapa"
                             label="Selecione uma imagem para adicionar ao seu perfil como capa"
@@ -226,7 +228,11 @@
                   {{ $limitarTexto(dialog.capa.img[0].name, 25) }}
                 </template>
               </v-file-input>
-              <h3 style="color: #007bff">Recomendado: 950x500px</h3>
+              <div class="text-center">
+                <v-btn v-show="isMobile" @click="openCapaUpload" color="info" text="Selecionar Capa" append-icon="mdi-image-area"/>
+              </div>
+
+              <h3 style="color: #007bff" :style="isMobile?'font-size: 12px; margin-top: 5px; text-align: center':''">Recomendado: 1400x800px</h3>
               <h3 style="color: red" v-if="dialog.capa.uploadErro.length > 0">{{ dialog.capa.uploadErro }}</h3>
             </v-card-text>
             <Transition>
@@ -829,6 +835,12 @@ export default {
           this.dialog.info.loading = false;
         });
       }
+    },
+    openFotoUpload(){
+      this.$refs.fotoUpload.click();
+    },
+    openCapaUpload(){
+      this.$refs.capaUpload.click();
     }
   },
   watch: {
