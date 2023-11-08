@@ -5,7 +5,7 @@
       <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
       <v-progress-linear v-show="loadingPage" color="info" :indeterminate="true"></v-progress-linear>
     </div>
-    <section class="player-section">
+    <section class="player-section" :style="isMobile?'':'max-width: 1000px'">
       <vue-plyr ref="player">
         <div class="plyr__video-embed">
           <iframe
@@ -23,7 +23,7 @@
         <v-btn @click="proximo" :disabled="disabledProximo" :text="!isMobile?'Próximo':''" size="small" color="#457BE4" :icon="isMobile?'mdi-chevron-right':false" append-icon="mdi-chevron-right" style="margin-left: 5px"></v-btn>
         <v-btn @click="reportar" :loading="reportLoading" :text="!isMobile?'Reportar Erro':''" size="small" color="#c30000" :icon="isMobile?'mdi-alert':false" prepend-icon="mdi-alert" style="margin-left: 5px"></v-btn>
       </article>
-      <article><!-- TODO: sessão de comentarios -->
+      <article>
         <ComentariosComponent v-if="episodio.idEpisodio" :tipo="1" :id-origem="episodio.idEpisodio"/>
         <v-progress-linear v-else indeterminate size="70" color="info"/>
       </article>
@@ -244,7 +244,6 @@ export default {
 
 .video-player {
   width: 100%;
-  max-width: 1000px;
   aspect-ratio: 16/9;
 }
 
