@@ -133,7 +133,10 @@ export default {
     },
     getData(registro){
       let data = new Date(registro);
-      return `${data.getDate() < 10 ? '0' + data.getDate() : data.getDate()}/${data.getMonth() < 10 ? '0' + data.getMonth() : data.getMonth()}/${data.getFullYear()}`;
+      let d = data.getDate() < 10 ? '0' + data.getDate() : data.getDate();
+      let m = data.getMonth() + 1 < 10 ? '0' + (data.getMonth() + 1) : data.getMonth() + 1;
+      let a = data.getFullYear();
+      return `${d}/${m}/${a}`;
     }
   },
   watch: {
