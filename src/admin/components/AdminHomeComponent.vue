@@ -10,7 +10,7 @@
         </v-card-text>
       </v-card> <!-- TODO: terminar de criar a pagina home de admin e depois criar as telas das rotas de admin do site -->
 
-      <v-card variant="tonal" style="margin: 5px" color="primary">
+      <v-card variant="tonal" style="margin: 5px" color="purple-lighten-1">
         <v-card-title>Animes</v-card-title>
         <v-card-text>
           Cadastrados: {{ infos.anime.totalAnimes }} <br/>
@@ -19,7 +19,7 @@
         </v-card-text>
       </v-card>
 
-      <v-card variant="tonal" style="margin: 5px" color="secondary">
+      <v-card variant="tonal" style="margin: 5px" color="cyan-lighten-1">
         <v-card-title>Episódios</v-card-title>
         <v-card-text>
           Cadastrados: {{ infos.episodio.totalEpisodios }} <br/>
@@ -77,7 +77,6 @@
 </template>
 
 <script>
-import {VDataTable} from 'vuetify/labs/VDataTable'
 import ViewCountComponent from "@/components/ViewCountComponent.vue";
 
 export default {
@@ -170,7 +169,7 @@ export default {
       }
     }
   }),
-  components: { ViewCountComponent, VDataTable},
+  components: { ViewCountComponent },
   methods: {
     carregarTudo(){
       this.carregarActiveUsers();
