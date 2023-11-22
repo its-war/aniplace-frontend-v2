@@ -19,6 +19,7 @@ import EditarEpisodioComponent from "@/admin/components/anime/EditarEpisodioComp
 import VerTodosComponent from "@/components/globalComponents/VerTodosComponent.vue";
 import UserPerfilComponent from "@/pages/UserPerfilComponent.vue";
 import FeedPage from "@/pages/FeedPage.vue";
+import ListarAnimesComponent from "@/admin/components/anime/ListarAnimesComponent.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -81,6 +82,11 @@ const router = createRouter({
             },
             {
               path: 'anime/editar/episodio',
+              name: 'Editar Episódio v2',
+              component: EditarEpisodioComponent
+            },
+            {
+              path: 'anime/editar/episodio/:idAnime',
               name: 'Editar Episódio',
               component: EditarEpisodioComponent
             },
@@ -91,6 +97,11 @@ const router = createRouter({
               props: {
                 opcao: 2
               }
+            },
+            {
+              path: 'anime/listar',
+              name: 'Animes Cadastrados',
+              component: ListarAnimesComponent
             }
           ]
         },
