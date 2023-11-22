@@ -264,6 +264,11 @@ export default {
       }
       return eps;
     }
+  },
+  mounted() {
+    if(this.$route.params.idAnime){
+      this.selecionarAnime(this.$route.params.idAnime);
+    }
   }
 }
 </script>
