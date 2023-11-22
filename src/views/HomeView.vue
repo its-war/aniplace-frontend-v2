@@ -101,13 +101,12 @@
   <v-navigation-drawer :scrim="false" v-model="activeDrawer" :rail="onAdminPage" :expand-on-hover="onAdminPage" class="drawer-mobile">
 
     <template v-slot:prepend>
-      <v-list density="compact">
+      <v-list>
         <v-list-group value="avatar">
           <template v-slot:activator="{props}">
             <v-list-item
                 v-if="isLogged"
                 v-bind="props"
-                lines="two"
                 :prepend-avatar="$store.user.getFoto ? $getImg($store.user.getFoto, 'user/foto') : null"
                 :prepend-icon="$store.user.getFoto ? null : $getImg($store.user.getFoto, 'user/foto')"
                 :title="$store.user.getPrimeiroNome"
@@ -117,13 +116,12 @@
             <v-list-item
                 v-else
                 v-bind="props"
-                lines="one"
                 title="Conta"
             ></v-list-item>
           </template>
 
           <v-list-item v-if="isLogged" @click="goRoute('Meu Perfil')" prepend-icon="mdi-account" title="Perfil" value="perfil"></v-list-item>
-          <v-list-item v-if="isLogged" @click="logout" prepend-icon="mdi-location-exit" title="Sair" value="sair"></v-list-item>
+          <v-list-item style="margin-bottom: 45px" v-if="isLogged" @click="logout" prepend-icon="mdi-location-exit" title="Sair" value="sair"></v-list-item>
 
           <v-list-item v-if="!isLogged" @click="goRoute('Login')" prepend-icon="mdi-login" title="Login" value="login"></v-list-item>
           <v-list-item v-if="!isLogged" @click="goRoute('Cadastro')" prepend-icon="mdi-account-plus" title="Cadastro" value="cadastro"></v-list-item>
@@ -168,25 +166,8 @@
 
         <v-list-item title="Usuários" value="usuarios"></v-list-item>
         <v-list-item title="Reportes" value="reportes"></v-list-item>
+        <v-list-item @click="goRoute('Animes Cadastrados')" title="Animes"></v-list-item>
 
-        <v-list-group value="AdminAnime">
-          <template v-slot:activator="{props}">
-            <v-list-item v-bind="props" title="Animes" value="admin-animes"></v-list-item>
-          </template>
-
-          <v-list-item @click="goRoute('Cadastrar Anime')" title="Cadastrar" value="cadastrar-animes"></v-list-item>
-          <v-list-item title="Listar" value="listar-animes"></v-list-item>
-          <v-list-item @click="goRoute('Selecionar Anime')" title="Add. Episódio" value="cadastrar-episodios"></v-list-item>
-
-          <v-list-group value="AdminAnimeEditar">
-            <template v-slot:activator="{props}">
-              <v-list-item v-bind="props" title="Editar" value="admin-animes"></v-list-item>
-            </template>
-
-            <v-list-item title="Anime" value="editar-anime"></v-list-item>
-            <v-list-item @click="goRoute('Editar Episódio')" title="Episódio" value="editar-episodio"></v-list-item>
-          </v-list-group>
-        </v-list-group>
         <v-list-group value="AdminDestaques">
           <template v-slot:activator="{props}" title="Destaques">
             <v-list-item
