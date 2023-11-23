@@ -136,6 +136,16 @@
 
     <div class="campo-divider5"><v-divider/></div>
 
+    <div class="campo-tipo">
+      <v-checkbox-btn
+        label="Marque essa caixa se o anime for longo. Ex: Naruto, One Piece, Bleach..."
+        color="info"
+        v-model="anime.tipo"
+      />
+    </div>
+
+    <div class="campo-divider7"><v-divider/></div>
+
     <div class="campo-sinopse">
       <v-textarea label="Escreva a sinopse"
                   variant="outlined"
@@ -176,6 +186,7 @@ export default {
       audio: 2,
       site: '',
       myanimelist: '',
+      tipo: false,
       sinopse: ''
     },
     img: {
@@ -269,6 +280,9 @@ export default {
         if(this.anime.myanimelist.length > 0){
           formData.append('myanimelist', this.anime.myanimelist);
         }
+        if(this.anime.tipo){
+          formData.append('tipo', 2);
+        }
         formData.append('sinopse', JSON.stringify(this.anime.sinopse.split('\n')));
         formData.append('foto', this.img.foto[0]);
         formData.append('capa', this.img.capa[0]);
@@ -305,6 +319,7 @@ export default {
       this.anime.site = '';
       this.anime.myanimelist = '';
       this.anime.sinopse = '';
+      this.anime.tipo = false;
 
       this.resetarFoto();
       this.resetarCapa();
@@ -343,6 +358,8 @@ export default {
                        "divider4 divider4 divider4 divider4"
                        "site site myanimelist myanimelist"
                        "divider5 divider5 divider5 divider5"
+                       "tipo tipo tipo tipo"
+                       "divider7 divider7 divider7 divider7"
                        "sinopse sinopse sinopse sinopse"
                        "divider6 divider6 divider6 divider6"
                        "actions actions actions actions";
@@ -372,6 +389,10 @@ export default {
 
 .campo-divider6 {
   grid-area: divider6;
+}
+
+.campo-divider7 {
+  grid-area: divider7;
 }
 
 .campo-title {
@@ -445,6 +466,11 @@ export default {
 
 .campo-myanimelist {
   grid-area: myanimelist;
+  padding: 10px;
+}
+
+.campo-tipo {
+  grid-area: tipo;
   padding: 10px;
 }
 
