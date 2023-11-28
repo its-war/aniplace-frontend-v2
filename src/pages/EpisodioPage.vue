@@ -144,27 +144,75 @@ export default {
         });
       }
     },
-    proximo(){
+    proximo() {
+      // Remove o último episódio da temporada atual e armazena em proximoEp
       let proximoEp = this.episodio.temporadas[this.episodio.temporada - 1].episodios.pop();
-      if(this.episodio.numero < proximoEp.numero){
+
+      // Verifica se o número do próximo episódio é maior que o número do episódio atual
+      if (this.episodio.numero < proximoEp.numero) {
+        // Vai para o próximo episódio na mesma temporada
         this.goEpisodio(this.episodio.temporada, this.episodio.numero + 1 + this.episodio.duplo);
-      }else{
-        if(this.episodio.temporada + 1 <= this.episodio.temporadas.length){
-          this.goEpisodio(this.episodio.temporada + 1, 1);
+      } else {
+        // Se o número do próximo episódio não for maior que o número do episódio atual
+        // Verifica se há uma temporada seguinte
+        if (this.episodio.temporada + 1 <= this.episodio.temporadas.length) {
+          // Verifica se o tipo do anime é maior que 1
+          if (this.episodio.anime.tipo > 1) {
+            // Vai para o primeiro episódio da próxima temporada
+            this.goEpisodio(this.episodio.temporada + 1, this.episodio.temporadas[this.episodio.temporada].episodios[0].numero);
+          } else {
+            // Vai para o primeiro episódio da próxima temporada
+            this.goEpisodio(this.episodio.temporada + 1, 1);
+          }
         }
       }
     },
-    anterior(){
-      if(this.episodio.numero > 1){
-        for (let i = 0; i < this.episodio.temporadas[this.episodio.temporada - 1].episodios.length; i++) {
-          if(this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero === this.episodio.numero){
-            this.goEpisodio(this.episodio.temporada, this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero - 1 - this.episodio.temporadas[this.episodio.temporada - 1].episodios[i - 1].duplo);
-            break;
+    anterior() {
+      // Verifica se o tipo do anime é maior que 1
+      if (this.episodio.anime.tipo > 1) {
+        // Verifica se a temporada é maior que 1
+        if (this.episodio.temporada > 1) {
+          // Verifica se o número do episódio é maior que o primeiro episódio da temporada atual
+          if (this.episodio.numero > this.episodio.temporadas[this.episodio.temporada - 1].episodios[0].numero) {
+            // Itera sobre os episódios da temporada atual
+            for (let i = 0; i < this.episodio.temporadas[this.episodio.temporada - 1].episodios.length; i++) {
+              // Verifica se o número do episódio atual é igual ao número do episódio desejado
+              if (this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero === this.episodio.numero) {
+                // Chama a função goEpisodio com a temporada atual e o número do episódio anterior
+                this.goEpisodio(this.episodio.temporada, this.episodio.temporadas[this.episodio.temporada - 1].episodios[i - 1].numero);
+                break;
+              }
+            }
+          } else {
+            // Se o número do episódio não for maior que o primeiro episódio da temporada,
+            // vai para o último episódio da temporada anterior
+            this.goEpisodio(this.episodio.temporada - 1, this.episodio.temporadas[this.episodio.temporada - 2].episodios.pop().numero);
+          }
+        } else {
+          // Se a temporada não for maior que 1, vai para o episódio anterior na mesma temporada
+          for (let i = 0; i < this.episodio.temporadas[this.episodio.temporada - 1].episodios.length; i++) {
+            if (this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero === this.episodio.numero) {
+              this.goEpisodio(this.episodio.temporada, this.episodio.temporadas[this.episodio.temporada - 1].episodios[i - 1].numero);
+              break;
+            }
           }
         }
-      }else{
-        if(this.episodio.temporada - 1 >= 1){
-          this.goEpisodio(this.episodio.temporada - 1, this.episodio.temporadas[this.episodio.temporada - 2].totalEpisodios);
+      } else {
+        // Se o tipo do anime não for maior que 1
+        if (this.episodio.numero > 1) {
+          // Vai para o episódio anterior na mesma temporada
+          for (let i = 0; i < this.episodio.temporadas[this.episodio.temporada - 1].episodios.length; i++) {
+            if (this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero === this.episodio.numero) {
+              this.goEpisodio(this.episodio.temporada, this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero - 1 - this.episodio.temporadas[this.episodio.temporada - 1].episodios[i - 1].duplo);
+              break;
+            }
+          }
+        } else {
+          // Se o número do episódio for 1
+          if (this.episodio.temporada - 1 >= 1) {
+            // Vai para o último episódio da temporada anterior
+            this.goEpisodio(this.episodio.temporada - 1, this.episodio.temporadas[this.episodio.temporada - 2].totalEpisodios);
+          }
         }
       }
     },
@@ -188,10 +236,6 @@ export default {
         const episodesList = document.getElementById(`episodesList${this.$route.params.temporada}`);
         episodesList.scrollTop = episodePosition;
       }
-    },
-    teste(temporada, numero){
-      console.log("==========================================================");
-      console.log(this.episodio.temporadas[temporada.numeroTemporada - 1]);
     }
   },
   data: () => ({
@@ -205,7 +249,8 @@ export default {
       anime: {
         idAnime: null,
         nome: null,
-        capa: null
+        capa: null,
+        tipo: null
       },
       temporadas: []
     },
