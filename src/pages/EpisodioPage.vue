@@ -1,7 +1,11 @@
 <template>
   <v-main :style='isMobile ? `grid-template-areas: "title title title" "content content content";` : ``' class="main-episodio">
     <div class="anime-title">
-      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada === 1 && episodio.anime.nome">{{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
+      <h2 :style="isMobile?'text-align: center;':''"
+          v-if="episodio.temporada === 1 && episodio.anime.nome">
+        {{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.duplo?'-' + getEpisodioNumero(episodio.numero + 1):''}}{{episodio.ova ? ' — OVA' : ''}}
+      </h2>
+
       <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
       <v-progress-linear v-show="loadingPage" color="info" :indeterminate="true"></v-progress-linear>
     </div>
@@ -37,24 +41,24 @@
       <v-window v-model="temporadaTab" style="padding-right: 15px">
         <v-window-item :id="`episodesList${temporada.numeroTemporada}`" class="conteiner-episodios" v-for="(temporada, i) in episodio.temporadas" :key="i" :value="temporada.numeroTemporada">
 
-          <div @click="goEpisodio(temporada.numeroTemporada, numero)"
+          <div @click="goEpisodio(temporada.numeroTemporada, episodio.numero)"
                class="aside-episodio"
-               :id="`temporada${temporada.numeroTemporada}_episodio${numero}`"
-               :style="parseInt($route.params.temporada) === temporada.numeroTemporada && parseInt($route.params.numero) === numero ? 'background-color: rgb(170,0,0);' : ''"
-               v-for="numero in temporada.totalEpisodios" :key="numero"
+               :id="`temporada${temporada.numeroTemporada}_episodio${episodio.numero}`"
+               :style="parseInt($route.params.temporada) === temporada.numeroTemporada && parseInt($route.params.numero) === episodio.numero ? 'background-color: rgb(170,0,0);' : ''"
+               v-for="(episodio, i) in temporada.episodios" :key="i"
           >
             <div class="thumb">
               <v-icon
-                  :color="parseInt($route.params.temporada) === temporada.numeroTemporada && parseInt($route.params.numero) === numero ? 'rgb(170,0,0)' : 'white'"
-                  :icon="parseInt($route.params.temporada) === temporada.numeroTemporada && parseInt($route.params.numero) === numero ? 'mdi-restart' : 'mdi-play-circle-outline'"
+                  :color="parseInt($route.params.temporada) === temporada.numeroTemporada && parseInt($route.params.numero) === episodio.numero ? 'rgb(170,0,0)' : 'white'"
+                  :icon="parseInt($route.params.temporada) === temporada.numeroTemporada && parseInt($route.params.numero) === episodio.numero ? 'mdi-restart' : 'mdi-play-circle-outline'"
                   size="x-large"
                   class="icon-play-episodio"
               ></v-icon>
             </div>
             <div class="episodio-title">
-              Episódio {{getEpisodioNumero(numero)}}
+              Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.duplo?'-' + getEpisodioNumero(episodio.numero + 1):''}}{{episodio.ova?' — OVA':''}}
               <v-spacer/>
-              <ViewCountComponent :short="true" :views="temporada.acessos[numero - 1]"/>
+              <ViewCountComponent :short="true" :views="episodio.acessos"/>
             </div>
           </div>
         </v-window-item>
@@ -141,9 +145,9 @@ export default {
       }
     },
     proximo(){
-      let total = this.episodio.temporadas[this.episodio.temporada - 1].totalEpisodios;
-      if(this.episodio.numero < total){
-        this.goEpisodio(this.episodio.temporada, this.episodio.numero + 1);
+      let proximoEp = this.episodio.temporadas[this.episodio.temporada - 1].episodios.pop();
+      if(this.episodio.numero < proximoEp.numero){
+        this.goEpisodio(this.episodio.temporada, this.episodio.numero + 1 + this.episodio.duplo);
       }else{
         if(this.episodio.temporada + 1 <= this.episodio.temporadas.length){
           this.goEpisodio(this.episodio.temporada + 1, 1);
@@ -152,7 +156,12 @@ export default {
     },
     anterior(){
       if(this.episodio.numero > 1){
-        this.goEpisodio(this.episodio.temporada, this.episodio.numero - 1);
+        for (let i = 0; i < this.episodio.temporadas[this.episodio.temporada - 1].episodios.length; i++) {
+          if(this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero === this.episodio.numero){
+            this.goEpisodio(this.episodio.temporada, this.episodio.temporadas[this.episodio.temporada - 1].episodios[i].numero - 1 - this.episodio.temporadas[this.episodio.temporada - 1].episodios[i - 1].duplo);
+            break;
+          }
+        }
       }else{
         if(this.episodio.temporada - 1 >= 1){
           this.goEpisodio(this.episodio.temporada - 1, this.episodio.temporadas[this.episodio.temporada - 2].totalEpisodios);
@@ -179,6 +188,10 @@ export default {
         const episodesList = document.getElementById(`episodesList${this.$route.params.temporada}`);
         episodesList.scrollTop = episodePosition;
       }
+    },
+    teste(temporada, numero){
+      console.log("==========================================================");
+      console.log(this.episodio.temporadas[temporada.numeroTemporada - 1]);
     }
   },
   data: () => ({

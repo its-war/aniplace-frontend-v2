@@ -144,8 +144,8 @@
             <v-table class="scroll-table" :hover="true" :fixed-footer="false">
               <tbody>
               <tr v-for="(episodio, j) in temporada.episodios" :key="j">
-                <td style="text-align: center" :style="isMobile?'font-size: 10px':''">Episódio {{episodio.numero}}</td>
-                <td style="text-align: center"><v-btn @click="assistir(i + 1, j + 1)" :size="isMobile?'x-small':'default'" prepend-icon="mdi-play" color="secondary" variant="tonal">Assistir</v-btn></td>
+                <td style="text-align: center" :style="isMobile?'font-size: 10px':''">Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.duplo?'-' + getEpisodioNumero(episodio.numero + 1):''}}</td>
+                <td style="text-align: center"><v-btn @click="assistir(i + 1, episodio.numero)" :size="isMobile?'x-small':'default'" prepend-icon="mdi-play" color="secondary" variant="tonal">Assistir</v-btn></td>
                 <td style="text-align: center">
                   <v-btn @click="baixar(episodio.link1080p)" :size="isMobile?'x-small':'default'" prepend-icon="mdi-download" color="red" variant="tonal">
                     Baixar
@@ -379,6 +379,12 @@ export default {
         this.anime = value.data[0];
         document.title = this.anime.nome + ' — Aniplace';
       });
+    },
+    getEpisodioNumero(n){
+      if(n < 10){
+        return `0${n}`;
+      }
+      return n;
     }
   },
   watch: {
