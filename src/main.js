@@ -9,8 +9,11 @@ import { io } from 'socket.io-client'
 import VuePlyr from 'vue-plyr'
 import 'vue-plyr/dist/vue-plyr.css'
 import config from '../config';
+import { createHead } from '@vueuse/head';
 
 const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
+
+const head = createHead();
 
 import limitarTexto from "@/utils/limitarTexto";
 import getImg from "@/utils/getImg";
@@ -166,6 +169,7 @@ app.use(VuePlyr, {
         },
     }
 })
+app.use(head)
 
 // Store Instance
 const store = {
