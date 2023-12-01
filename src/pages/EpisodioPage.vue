@@ -2,11 +2,11 @@
   <v-main :style='isMobile ? `grid-template-areas: "title title title" "content content content";` : ``' class="main-episodio">
     <div class="anime-title">
       <h2 :style="isMobile?'text-align: center;':''"
-          v-if="episodio.temporada === 1 && episodio.anime.nome">
+          v-if="(episodio.temporada === 1 || episodio.anime.tipo === 2) && episodio.anime.nome">
         {{episodio.anime.nome}} — Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.duplo?'-' + getEpisodioNumero(episodio.numero + 1):''}}{{episodio.ova ? ' — OVA' : ''}}
       </h2>
 
-      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
+      <h2 :style="isMobile?'text-align: center;':''" v-if="episodio.temporada > 1 && episodio.anime.tipo === 1 && episodio.anime.nome">{{episodio.anime.nome}} — {{episodio.temporada}}ª Temporada, Episódio {{getEpisodioNumero(episodio.numero)}}{{episodio.ova ? ' — OVA' : ''}}</h2>
       <v-progress-linear v-show="loadingPage" color="info" :indeterminate="true"></v-progress-linear>
     </div>
     <section class="player-section" :style="isMobile?'':'max-width: 1000px'">
