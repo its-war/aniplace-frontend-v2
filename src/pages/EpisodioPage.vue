@@ -29,7 +29,7 @@
       </article>
       <article>
         <ComentariosComponent v-if="episodio.idEpisodio" :tipo="1" :id-origem="episodio.idEpisodio"/>
-        <v-progress-linear v-else indeterminate size="70" color="info"/>
+        <v-progress-linear v-else :indeterminate="true" size="70" color="info"/>
       </article>
     </section>
     <aside v-if="!isMobile" class="more-episodios">
@@ -108,7 +108,16 @@ export default {
               this.$socket.emit('userActivity', this.$store.user.getIdUser);
               this.$socket.emit('userAtividadeAnimeView', this.$store.user.getIdUser, this.$route.params.idAnime);
             }
-            document.title = this.episodio.anime.nome + ' - ' + this.$route.params.temporada + 'ª Temporada, episódio ' + this.$route.params.numero + ' — Aniplace';
+
+            if(this.episodio.anime.tipo === 2){
+              document.title = this.episodio.anime.nome + ' Ep. ' + this.$route.params.numero + ' — Aniplace';
+            }else{
+              if(parseInt(this.$route.params.temporada) > 1){
+                document.title = this.episodio.anime.nome + ' - ' + this.$route.params.temporada + 'ª Temporada, episódio ' + this.$route.params.numero + ' — Aniplace';
+              }else{
+                document.title = this.episodio.anime.nome + ' - Episódio ' + this.$route.params.numero + ' — Aniplace';
+              }
+            }
           }
         }).finally(() => {
           this.loadingPage = false;
