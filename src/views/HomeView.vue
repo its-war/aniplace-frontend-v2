@@ -191,6 +191,7 @@
                   v-model="mobileSearch"
                   v-on:click:appendInner="search(mobileSearch)"
                   v-on:keydown.enter="search(mobileSearch)"
+                  ref="searchDrawer"
     ></v-text-field>
   </v-navigation-drawer>
   <div class="body-event-click">
@@ -301,6 +302,8 @@ export default {
         this.pesquisa.painel = false;
         this.pesquisa.text = '';
         this.pesquisa.resultado = [];
+        this.menuMobile = false;
+        this.$refs.searchDrawer.blur();
       }
     },
     logout(){
