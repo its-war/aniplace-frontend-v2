@@ -41,8 +41,10 @@ export default {
   mounted() {
     this.axios.get('anime/getDestaques').then((value) => {
       this.animes = value.data.destaques;
+      this.$emit('isReady', true);
     });
-  }
+  },
+  emits: ['isReady']
 }
 </script>
 

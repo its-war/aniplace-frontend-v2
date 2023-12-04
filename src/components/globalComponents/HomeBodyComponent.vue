@@ -1,6 +1,6 @@
 <template>
   <div>
-    <CarouselComponent/>
+    <CarouselComponent @isReady="carregarTudo"/>
     <v-main>
       <SliderComponent v-if="ultimosLancamentos.list.length > 0"
                        :anime-list="ultimosLancamentos.list"
@@ -46,7 +46,6 @@
                        :anime-list="ultimos7Dias"/>
 
       <!--SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/-->
-      <!-- TODO: iniciar a criação de um algoritmo de automação para alimentar esses sliders -->
 
       <div class="text-center">
         <AdsComponent/>
@@ -114,9 +113,6 @@ export default {
         this.futurosLancamentos = response.data.futurosLancamentos;
       });
     }
-  },
-  mounted() {
-    this.carregarTudo();
   }
 }
 </script>
