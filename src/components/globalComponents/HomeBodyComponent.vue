@@ -42,6 +42,7 @@
       <SliderComponent v-if="ultimos7Dias.length > 0"
                        slide-nome="Adicionados recentemente"
                        icon="mdi-history"
+                       :show-only-temporada="true"
                        :anime-list="ultimos7Dias"/>
 
       <!--SliderComponent slide-nome="Futuros lançamentos" :anime-list="animes"/-->

@@ -2,7 +2,11 @@
   <v-slide-group-item>
     <div @click="clickEvent" class="item" :style="isMobile?'height: 100px !important; margin: 9px 3px;':''">
       <div class="item-numero" :style="isMobile?'font-size: 13px;':''">
-        <span v-if="$props.numero > 0 && $props.temporada">
+        <span v-if="$props.showOnlyTemporada">
+          {{$props.temporada ?? 1}}ª {{isMobile?'Temp.':'Temporada'}}
+        </span>
+
+        <span v-if="$props.numero > 0 && $props.temporada && !$props.showOnlyTemporada">
           {{$props.temporada}}ª {{isMobile?'Temp.':'Temporada'}}, Ep. {{$props.numero}}
         </span>
 
@@ -10,7 +14,7 @@
           {{$props.temporadaLancamento}}ª Temp. em breve
         </span>
 
-        <span v-if="$props.numero > 0 && $props.temporada === null">Episódio {{$props.numero}}</span>
+        <span v-if="$props.numero > 0 && $props.temporada === null && !$props.showOnlyTemporada">Episódio {{$props.numero}}</span>
 
         <span v-if="$props.showNota"><v-icon icon="mdi-star" color="yellow"/>{{parseFloat($props.nota).toFixed(2)}}</span>
       </div>
@@ -61,6 +65,10 @@ export default {
     temporadaLancamento: {
       type: Number,
       default: 0
+    },
+    showOnlyTemporada: {
+      type: Boolean,
+      default: false
     }
   },
   computed: {

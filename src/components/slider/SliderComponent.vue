@@ -34,6 +34,7 @@
           v-for="(episodio, i) in $props.animeList.slice(0, 10)" :key="i" :is-anime="$props.isAnime"
           :id="episodio.anime.idAnime" :temporada="episodio.temporada > 1 ? episodio.temporada : null"
           :nome="episodio.anime.nome" :foto="episodio.anime.capa" :numero="$props.showEpisodios ? episodio.numero : 0"
+          :show-only-temporada="$props.showOnlyTemporada"
       />
     </v-slide-group>
   </div>
@@ -81,6 +82,10 @@ export default {
       default: 1
     },
     showVerTodos: {
+      type: Boolean,
+      default: false
+    },
+    showOnlyTemporada: {
       type: Boolean,
       default: false
     }
