@@ -2,8 +2,15 @@
 import { RouterView } from 'vue-router'
 import {useDisplay} from "vuetify"
 import mainStore from "@/stores/mainStore"
+import { useHead } from "@vueuse/head";
 const main = mainStore();
 main.setMobile(useDisplay().mobile.value);
+
+useHead({
+  meta: [
+    //Ainda nenhuma
+  ]
+})
 </script>
 
 <template>

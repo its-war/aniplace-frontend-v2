@@ -117,7 +117,8 @@ export default {
     anime: {
       idAnime: 0,
       nome: '',
-      capa: ''
+      capa: '',
+      tipo: null
     },
     animeNota: null,
     snackbar: false,
@@ -178,10 +179,11 @@ export default {
         params: {
           id: this.animeSelecionado,
           pagina: 1,
-          campos: 'idAnime, nome, capa'
+          campos: 'idAnime, nome, capa, tipo'
         }
       }).then((response) => {
         this.anime = response.data[0];
+        this.getTemporadas();
       }).finally(() => {
         this.loadingPage = false;
       });
@@ -193,13 +195,12 @@ export default {
       }).then((response) => {
         this.animeNota = response.data.nota;
       });
-
-      this.getTemporadas();
     },
     getTemporadas(){
       this.axios.get('episodio/hasTemporada', {
         params: {
-          idAnime: this.animeSelecionado
+          idAnime: this.animeSelecionado,
+          tipo: this.anime.tipo
         }
       }).then((response) => {
         this.temporadas = response.data.numeroTemporadas;
@@ -259,8 +260,16 @@ export default {
     },
     selectEpisodios(){
       let eps = [];
-      for(let e = 0; e < this.temporadas[this.temporadaSelecionada - 1].numeroEpisodios; e++){
-        eps.push({value: e + 1, title: `Episódio ${e + 1}`});
+
+      if(this.anime.tipo === 2){//se for do tipo longo (2)
+        for (let ep = 0; ep < this.temporadas[this.temporadaSelecionada - 1].episodios.length; ep++) {
+          let episodio = this.temporadas[this.temporadaSelecionada - 1].episodios[ep];
+          eps.push({value: episodio.numero, title: `Episódio ${episodio.numero}${episodio.duplo?`-${episodio.numero + 1}`:''}`});
+        }
+      }else{
+        for(let e = 0; e < this.temporadas[this.temporadaSelecionada - 1].numeroEpisodios; e++){
+          eps.push({value: e + 1, title: `Episódio ${e + 1}`});
+        }
       }
       return eps;
     }
