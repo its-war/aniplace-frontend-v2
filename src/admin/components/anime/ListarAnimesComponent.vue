@@ -14,7 +14,7 @@
       <template v-slot:top>
         <v-toolbar :flat="true">
           <v-toolbar-title>Animes Cadastrados</v-toolbar-title>
-          <v-spacer/>
+          <v-spacer />
           <v-btn
             color="success"
             dark
@@ -43,35 +43,36 @@
 
       <template v-slot:item.nome="{item}">
         <span @click="goRoute(item.idAnime, 'Anime')" class="link-nome" :title="item.nome">
-          {{$limitarTexto(item.nome, 25)}}
+          {{ $limitarTexto(item.nome, 25) }}
         </span>
       </template>
 
       <template v-slot:item.status="{item}">
-        {{status[item.status - 1]}}
+        {{ status[item.status - 1] }}
       </template>
 
       <template v-slot:item.dia="{item}">
-        {{semana[item.dia - 1]}}
+        {{ semana[item.dia - 1] }}
       </template>
 
       <template v-slot:item.disponibilidade="{item}">
-        {{disponibilidade[item.disponibilidade - 1]}}
+        {{ disponibilidade[item.disponibilidade - 1] }}
       </template>
 
       <template v-slot:item.audio="{item}">
-        {{audio[item.audio - 1]}}
+        {{ audio[item.audio - 1] }}
       </template>
 
       <template v-slot:item.foto="{item}">
         <div style="padding: 10px 0">
-          <v-img style="border-radius: 10px" :src="$getImg(item.foto, 'anime/foto')" aspect-ratio="9/16" :cover="true" width="100px"/>
+          <v-img style="border-radius: 10px" :src="$getImg(item.foto, 'anime/foto')" aspect-ratio="9/16" :cover="true"
+                 width="100px" />
         </div>
       </template>
 
       <template v-slot:item.generos="{item}">
         <v-chip-group :column="true">
-          <v-chip v-for="genero in item.generos" :key="genero.idGenero">{{genero.nome}}</v-chip>
+          <v-chip v-for="genero in item.generos" :key="genero.idGenero">{{ genero.nome }}</v-chip>
         </v-chip-group>
       </template>
 
@@ -102,7 +103,8 @@
           </template>
           <v-list bg-color="pink-darken-4">
             <v-list-item prepend-icon="mdi-movie-open-plus" @click="goRoute(item.idAnime)">Add Episódio</v-list-item>
-            <v-list-item prepend-icon="mdi-playlist-plus" @click="goRoute(item.idAnime, 'Temporada')">Add Temporada</v-list-item>
+            <v-list-item prepend-icon="mdi-playlist-plus" @click="goRoute(item.idAnime, 'Temporada')">Add Temporada
+            </v-list-item>
 
             <v-list-item
               prepend-icon="mdi-movie-edit"
@@ -114,7 +116,7 @@
       </template>
 
       <template v-slot:item.acessos="{item}">
-        <ViewCountComponent :views="item.acessos" :short="true"/>
+        <ViewCountComponent :views="item.acessos" :short="true" />
       </template>
 
       <template v-slot:item.actions="{item}">
@@ -124,7 +126,7 @@
 
       <template v-slot:bottom>
         <div class="text-center" v-show="!pesquisa.active">
-          <v-pagination v-model="dados.pagina" :length="dados.total" :total-visible="5" color="red"/>
+          <v-pagination v-model="dados.pagina" :length="dados.total" :total-visible="5" color="red" />
         </div>
       </template>
     </v-data-table>
@@ -136,7 +138,7 @@
           <v-btn
             @click="dialog.anime.active = false"
             style="position: fixed; top: 0; right: 5px"
-            icon="mdi-close" :flat="true"/>
+            icon="mdi-close" :flat="true" />
         </v-card-title>
         <v-card-text>
           <v-form>
@@ -164,27 +166,53 @@
               <h4>Gêneros <span style="color: rgb(0,110,250); font-size: 30px">*</span></h4>
               <v-col sm="12" cols="12">
                 <v-chip-group :multiple="true" v-model="dialog.anime.data.generos" selected-class="text-blue">
-                  <v-chip v-for="(genero, i) in generos" :value="genero.idGenero" :key="i">{{genero.nome}}</v-chip>
+                  <v-chip v-for="(genero, i) in generos" :value="genero.idGenero" :key="i">{{ genero.nome }}</v-chip>
                 </v-chip-group>
               </v-col>
             </v-row>
 
             <v-row :no-gutters="true" style="margin-top: 15px">
-              <v-col sm="6" cols="12">
-                <div class="text-center">
-                  <v-img class="ma-auto" aspect-ratio="9/16" width="50%" :src="$getImg(dialog.anime.data.foto, 'anime/foto')" style="border-radius: 10px"/>
-                  <v-btn text="Mudar Foto" color="info" variant="tonal" style="margin-top: 5px"/>
-                </div>
-              </v-col>
-              <v-col sm="6" cols="12">
-                <div class="text-center">
-                  <v-img class="ma-auto" aspect-ratio="16/9" width="95%" :src="$getImg(dialog.anime.data.capa, 'anime/capa')" style="border-radius: 10px"/>
-                  <v-btn text="Mudar Capa" color="success" variant="tonal" style="margin-top: 5px"/>
+              <v-col sm="12" cols="12">
+                <div class="text-center" style="color: red">
+                * As imagens serão enviadas imediatamente assim que selecionadas.
                 </div>
               </v-col>
             </v-row>
 
-            <v-divider class="ma-4"/>
+            <v-row :no-gutters="true">
+              <v-col sm="6" cols="12">
+                <div class="text-center">
+                  <v-file-input
+                    style="display: none"
+                    accept="image/*"
+                    v-model="dialog.anime.fotoLocal"
+                    ref="fotoLocal"
+                    @change="fotoUploadEvent"
+                  />
+
+                  <v-img class="ma-auto" aspect-ratio="9/16" width="50%"
+                         :src="$getImg(dialog.anime.data.foto, 'anime/foto')" style="border-radius: 10px" />
+                  <v-btn :loading="dialog.loading.anime.foto" @click="fotoInputClick" text="Mudar Foto" color="info" variant="tonal" style="margin-top: 5px" />
+                </div>
+              </v-col>
+              <v-col sm="6" cols="12">
+                <div class="text-center">
+                  <v-file-input
+                    style="display: none"
+                    accept="image/*"
+                    v-model="dialog.anime.capaLocal"
+                    ref="capaLocal"
+                    @change="capaUploadEvent"
+                  />
+
+                  <v-img class="ma-auto" aspect-ratio="16/9" width="95%"
+                         :src="$getImg(dialog.anime.data.capa, 'anime/capa')" style="border-radius: 10px" />
+                  <v-btn :loading="dialog.loading.anime.capa" @click="capaInputClick" text="Mudar Capa" color="success" variant="tonal" style="margin-top: 5px" />
+                </div>
+              </v-col>
+            </v-row>
+
+            <v-divider class="ma-4" />
 
             <v-row :no-gutters="true" style="margin-top: 15px">
               <v-col sm="3" cols="12" style="padding: 5px">
@@ -270,46 +298,16 @@
                             :rows="7"
                             base-color="info"
                             color="info"
-                            v-model="dialog.anime.data.sinopse"/>
+                            v-model="dialog.anime.data.sinopse" />
                 <h5 style="color: rgb(255,0,0)">* Separe os parágrafos por APENAS uma quebra de linha (enter).</h5>
               </v-col>
             </v-row>
 
-            <v-divider/>
+            <v-divider />
 
-            <v-row :no-gutters="true">
-              <v-col sm="12" cols="12" class="pa-5">
-                <span>Adicione prints para o anime</span><br/>
-                <v-file-input
-                  @change="inputPrintsEvent"
-                  :multiple="true"
-                  accept="image/*"
-                  style="display: none"
-                  ref="prints"
-                />
-              </v-col>
-            </v-row>
+            <FormPrints :anime-prints="dialog.anime.data.prints"/>
 
-            <v-row :no-gutters="true">
-              <v-col cols="12" sm="2" class="pa-2" v-for="(img, i) in renderizarPreviaPrints" :key="i" style="position: relative">
-                <v-img :src="img" class="d-flex align-center" height="130" width="auto" aspect-ratio="16/9"/>
-                <v-btn icon="mdi-close" style="position: absolute; top: 0; right: 0" @click="removerPrint(img)"/>
-              </v-col>
-
-              <v-col cols="12" sm="2" class="pa-2" v-for="(img, i) in renderizarPreviaPrintsLocais" :key="i" style="position: relative">
-                <v-img :src="img" class="d-flex align-center" height="130" width="auto" aspect-ratio="16/9"/>
-                <v-btn icon="mdi-close" style="position: absolute; top: 0; right: 0" @click="removerPrint(i, 2)"/>
-              </v-col>
-
-              <v-col cols="12" sm="2" class="pa-2" v-for="n in renderizarBotoesAdicionar" :key="n">
-                <v-card class="d-flex align-center" height="130" color="grey-lighten-1" @click="abrirSelecionarPrints">
-                  <v-icon icon="mdi-plus" size="45px" class="ma-auto"/>
-                  <span class="ma-auto">Adicionar</span>
-                </v-card>
-              </v-col>
-            </v-row>
-
-            <v-divider/>
+            <v-divider style="margin-top: 10px"/>
 
             <v-row :no-gutters="true">
               <v-col sm="6" cols="12" class="pa-5">
@@ -329,8 +327,10 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn prepend-icon="mdi-send" variant="tonal" text="Cadastrar" style="margin: 5px" color="success" theme="light"/>
-          <v-btn prepend-icon="mdi-restart" variant="tonal" text="Limpar Campos" style="margin: 5px" color="primary" theme="light"/>
+          <v-btn @click="salvarEdit" prepend-icon="mdi-content-save" variant="tonal" text="Salvar" style="margin: 5px" color="success"
+                 theme="light" />
+          <v-btn prepend-icon="mdi-cancel" variant="tonal" text="Fechar" style="margin: 5px" color="primary"
+                 theme="light" />
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -339,23 +339,25 @@
 
 <script>
 import ViewCountComponent from "@/components/ViewCountComponent.vue";
+import FormPrints from "@/admin/components/utils/FormPrints.vue";
+
 export default {
   name: "ListarAnimesComponent",
-  components: { ViewCountComponent },
+  components: { FormPrints, ViewCountComponent },
   data: () => ({
     tableHeaders: [
-      { title: 'Foto', align: 'start', key: 'foto', sortable: false },
-      { title: 'Nome', align: 'start', key: 'nome', sortable: false },
-      { title: 'Gêneros', align: 'start', key: 'generos', sortable: false },
-      { title: 'Status', align: 'start', key: 'status', sortable: false },
-      { title: 'Dia', align: 'start', key: 'dia', sortable: false },
-      { title: 'Ano', align: 'start', key: 'ano', sortable: false },
-      { title: 'Episódios', align: 'start', key: 'episodios', sortable: false },
-      { title: 'Acessos', align: 'start', key: 'acessos', sortable: false },
-      { title: 'Ações', align: 'start', key: 'actions', sortable: false },
+      { title: "Foto", align: "start", key: "foto", sortable: false },
+      { title: "Nome", align: "start", key: "nome", sortable: false },
+      { title: "Gêneros", align: "start", key: "generos", sortable: false },
+      { title: "Status", align: "start", key: "status", sortable: false },
+      { title: "Dia", align: "start", key: "dia", sortable: false },
+      { title: "Ano", align: "start", key: "ano", sortable: false },
+      { title: "Episódios", align: "start", key: "episodios", sortable: false },
+      { title: "Acessos", align: "start", key: "acessos", sortable: false },
+      { title: "Ações", align: "start", key: "actions", sortable: false }
     ],
     pesquisa: {
-      texto: '',
+      texto: "",
       resultado: [],
       active: false
     },
@@ -366,82 +368,93 @@ export default {
     },
     pageLoading: false,
     semana: [
-      'Domingo',
-      'Segunda',
-      'Terça',
-      'Quarta',
-      'Quinta',
-      'Sexta',
-      'Sábado'
+      "Domingo",
+      "Segunda",
+      "Terça",
+      "Quarta",
+      "Quinta",
+      "Sexta",
+      "Sábado"
     ],
     semanaEdit: [
-      {value: 1, title: 'Domingo'},
-      {value: 2, title: 'Segunda'},
-      {value: 3, title: 'Terça'},
-      {value: 4, title: 'Quarta'},
-      {value: 5, title: 'Quinta'},
-      {value: 6, title: 'Sexta'},
-      {value: 7, title: 'Sábado'},
+      { value: 1, title: "Domingo" },
+      { value: 2, title: "Segunda" },
+      { value: 3, title: "Terça" },
+      { value: 4, title: "Quarta" },
+      { value: 5, title: "Quinta" },
+      { value: 6, title: "Sexta" },
+      { value: 7, title: "Sábado" }
     ],
     status: [
-      'Completo',
-      'Em Lançamento',
-      'Incompleto'
+      "Completo",
+      "Em Lançamento",
+      "Incompleto"
     ],
     disponibilidade: [
-      'Online e Download',
-      'Online',
-      'Download'
+      "Online e Download",
+      "Online",
+      "Download"
     ],
     audio: [
-      'Dublado',
-      'Legendado'
+      "Dublado",
+      "Legendado"
     ],
     dialog: {
       anime: {
         data: {},
         active: false,
-        prints: []
+        prints: [],
+        fotoLocal: null,
+        capaLocal: null
       },
       episodio: {
         active: false,
         list: []
+      },
+      loading: {
+        anime: {
+          foto: false,
+          capa: false,
+          prints: false,
+          salvar: false,
+          printProgress: 0
+        }
       }
     },
     generos: [],
     anos: []
   }),
   methods: {
-    carregarAnimes(){
+    carregarAnimes() {
       this.pageLoading = true;
-      this.axios.get('anime/listar?pagina=' + this.dados.pagina).then((response) => {
+      this.axios.get("anime/listar?pagina=" + this.dados.pagina).then((response) => {
         this.dados.animes = response.data.animes;
         this.dados.total = response.data.total;
       }).finally(() => {
         this.pageLoading = false;
-      })
+      });
     },
-    goRoute(idAnime, contexto = 'Episódio'){
-      if(contexto === 'Editar Episódio'){
-        this.$router.push({name: `${contexto}`, params: {idAnime: idAnime}});
+    goRoute(idAnime, contexto = "Episódio") {
+      if (contexto === "Editar Episódio") {
+        this.$router.push({ name: `${contexto}`, params: { idAnime: idAnime } });
         return;
       }
 
-      if(contexto === 'Anime'){
-        if(idAnime > 0){
-          this.$router.push({name: `${contexto}`, params: {id: idAnime}});
+      if (contexto === "Anime") {
+        if (idAnime > 0) {
+          this.$router.push({ name: `${contexto}`, params: { id: idAnime } });
           return;
         }
-        this.$router.push({name: `Cadastrar ${contexto}`});
+        this.$router.push({ name: `Cadastrar ${contexto}` });
         return;
       }
-      this.$router.push({name: `Cadastrar ${contexto}`, params: {idAnime: idAnime}});
+      this.$router.push({ name: `Cadastrar ${contexto}`, params: { idAnime: idAnime } });
     },
-    busca(){
-      if(this.pesquisa.texto.length > 0){
+    busca() {
+      if (this.pesquisa.texto.length > 0) {
         this.pesquisa.active = true;
         this.pageLoading = true;
-        this.axios.get('anime/pesquisa', {
+        this.axios.get("anime/pesquisa", {
           params: {
             texto: this.pesquisa.texto,
             pagina: 1
@@ -451,105 +464,106 @@ export default {
         }).finally(() => {
           this.pageLoading = false;
         });
-      }else{
+      } else {
         this.resetarBusca();
       }
     },
-    resetarBusca(){
-      this.pesquisa.texto = '';
+    resetarBusca() {
+      this.pesquisa.texto = "";
       this.pesquisa.resultado = [];
       this.pesquisa.active = false;
       this.pageLoading = false;
     },
-    dialogEditarAnime(anime){
-      this.dialog.anime.data = anime;
+    dialogEditarAnime(anime) {
+      this.dialog.anime.data = { ...anime };
       this.parseGenerosToVModelFormat();
       this.parseSinopseToVModelFormat();
       this.parseTipoToVModelFormat();
-      this.parsePrintsToVModelFormat();
       this.dialog.anime.prints = [];
       this.dialog.anime.active = true;
     },
-    carregarGeneros(){
-      this.axios.get('anime/listarGeneros').then((value) => {
+    carregarGeneros() {
+      this.axios.get("anime/listarGeneros").then((value) => {
         this.generos = value.data.generos;
       });
     },
-    parseGenerosToVModelFormat(){
+    parseGenerosToVModelFormat() {
       this.dialog.anime.data.generos = this.dialog.anime.data.generos.map(genero => genero.idGenero);
     },
-    parseSinopseToVModelFormat(){
-      this.dialog.anime.data.sinopse = this.dialog.anime.data.sinopse.join('\n');
+    parseSinopseToVModelFormat() {
+      if(Array.isArray(this.dialog.anime.data.sinopse)){
+        this.dialog.anime.data.sinopse = this.dialog.anime.data.sinopse.join("\n");
+      }
     },
-    parseTipoToVModelFormat(){
+    parseTipoToVModelFormat() {
       this.dialog.anime.data.tipo = this.dialog.anime.data.tipo === 2;
     },
-    parsePrintsToVModelFormat(){
-      if(this.dialog.anime.data.prints !== 'p'){
-        this.dialog.anime.data.prints = this.dialog.anime.data.prints.split('_');
-      }
+    salvarEdit(){},
+    fotoInputClick() {
+      this.$refs.fotoLocal.click();
     },
-    abrirSelecionarPrints(){
-      this.$refs.prints.click();
+    capaInputClick(){
+      this.$refs.capaLocal.click();
     },
-    removerPrint(img, opcao = 1) {
-      if(opcao === 1){
-        if (this.dialog.anime.data.prints.includes(img.split('/').pop())) {
-          this.dialog.anime.data.prints.splice(this.dialog.anime.data.prints.indexOf(img.split('/').pop()),1);
+    uploadFotoEvent(event, opcao) {
+      this.axios.put('admin/anime/alterarFoto', {
+        img: event.target.files[0],
+        id: this.dialog.anime.data.idAnime,
+        opcao: opcao
+      }, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      }else{
-        this.dialog.anime.prints.splice(img,1);
-      }
+      }).then((res) => {
+        if(res.data.upload){
+          let indexDados = this.dados.animes.findIndex(anime => anime.idAnime === this.dialog.anime.data.idAnime);
+          let indexSearch = this.pesquisa.resultado.findIndex(anime => anime.idAnime === this.dialog.anime.data.idAnime);
+          if(opcao === 1) {
+            this.dialog.anime.data.foto = res.data.img;
+            if(indexDados !== -1){
+              this.dados.animes[indexDados].foto = res.data.img;
+            }
+            if(indexSearch !== -1){
+              this.pesquisa.resultado[indexSearch].foto = res.data.img;
+            }
+          }else{
+            this.dialog.anime.data.capa = res.data.img;
+            if(indexDados !== -1){
+              this.dados.animes[indexDados].capa = res.data.img;
+            }
+            if(indexSearch !== -1){
+              this.pesquisa.resultado[indexSearch].capa = res.data.img;
+            }
+          }
+        }
+      }).finally(() => {
+        this.dialog.loading.anime.foto = false;
+        this.dialog.loading.anime.capa = false;
+      });
     },
-    inputPrintsEvent(event){
-      for (let i = 0; i < event.target.files.length; i++) {
-        this.dialog.anime.prints.push(event.target.files[i]);
-      }
+    fotoUploadEvent(event) {
+      this.dialog.loading.anime.foto = true;
+      this.uploadFotoEvent(event, 1);
+    },
+    capaUploadEvent(event) {
+      this.dialog.loading.anime.capa = true;
+      this.uploadFotoEvent(event, 2);
     }
   },
   watch: {
-    'dados.pagina'(){
+    "dados.pagina"() {
       this.carregarAnimes();
     }
   },
-  mounted(){
+  mounted() {
     this.carregarAnimes();
     this.carregarGeneros();
 
-    for(let i = new Date().getFullYear() + 1; i >= 1960; i--){
+    for (let i = new Date().getFullYear() + 1; i >= 1960; i--) {
       this.anos.push(i);
     }
-  },
-  computed: {
-    renderizarPreviaPrints(){
-      const files = [];
-      if(this.dialog.anime.data.prints !== 'p'){
-        for (let i = 0; i < this.dialog.anime.data.prints.length; i++) {
-          files.push(this.$getImg(this.dialog.anime.data.prints[i], 'anime/print'));
-        }
-      }
-      return files;
-    },
-    renderizarPreviaPrintsLocais(){
-      const files = [];
-      let limite = 5 - (this.dialog.anime.data.prints === 'p' ? 0 : this.dialog.anime.data.prints);
-      for (let i = 0; i < this.dialog.anime.prints.length; i++) {
-        if(limite <= 0) break;
-        if(i + 1 <= limite){
-          files.push(URL.createObjectURL(this.dialog.anime.prints[i]));
-        }
-      }
-      return files;
-    },
-    renderizarBotoesAdicionar(){
-      let retorno = 5 - this.dialog.anime.prints.length;
-      if(this.dialog.anime.data.prints !== 'p'){
-        retorno = 5 - this.dialog.anime.data.prints.length - this.dialog.anime.prints.length;
-      }
-      return retorno < 0 ? 0 : retorno;
-    }
   }
-}
+};
 </script>
 
 <style scoped>
@@ -559,7 +573,7 @@ export default {
 
 .link-nome:hover {
   text-decoration: underline;
-  color: rgb(0,150,255);
+  color: rgb(0, 150, 255);
 }
 
 th.resizeable {
