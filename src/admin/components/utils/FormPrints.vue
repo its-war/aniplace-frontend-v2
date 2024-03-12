@@ -43,7 +43,8 @@ export default {
   data: () => ({
     prints: [],
     printsLocais: [],
-    slotsDisponiveis: 5
+    slotsDisponiveis: 5,
+    modifications: []
   }),
   computed: {
     renderizarPrints() {
@@ -66,11 +67,11 @@ export default {
       if(this.printsLocais.length > 0){
         return true;
       }
-      if(this.$props.animePrints !== 'p'){
-        if(this.$props.animePrints === this.prints.join('_')){
+      if(this.$props.animePrints !== "p"){
+        if(this.prints.length !== this.$props.animePrints.split("_").length){
           return true;
         }
-      }//TODO: corrigir problema de mostrar os botoes quando os prints são previamente carregados
+      }
 
       return false;
     }
@@ -87,6 +88,7 @@ export default {
       if (opcao === 1) {
         if (this.prints.includes(img.split("/").pop())) {
           this.prints.splice(this.prints.indexOf(img.split("/").pop()), 1);
+          this.modifications.push(img.split("/").pop());
         }
       } else {
         this.printsLocais.splice(img, 1);
