@@ -305,7 +305,7 @@
 
             <v-divider />
 
-            <FormPrints :anime-prints="dialog.anime.data.prints"/>
+            <FormPrints :anime-prints="dialog.anime.data.prints" :id-anime="this.dialog.anime.data.idAnime"/>
 
             <v-divider style="margin-top: 10px"/>
 

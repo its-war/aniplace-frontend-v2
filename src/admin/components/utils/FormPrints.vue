@@ -33,8 +33,8 @@
     </v-col><!-- aqui renderiza os botões 'Adicionar' na quantidade de slots disponíveis -->
   </v-row>
 
-  <v-btn v-if="hasModification" text="Salvar Prints" prepend-icon="mdi-content-save" color="success" style="margin-left: 10px"/>
-  <v-btn v-if="hasModification" text="Resetar" prepend-icon="mdi-reload" color="info" style="margin-left: 10px"/>
+  <v-btn v-if="hasModification" @click="salvarPrints" :loading="loading" text="Salvar Prints" prepend-icon="mdi-content-save" color="success" style="margin-left: 10px"/>
+  <v-btn v-if="hasModification" @click="resetar" :loading="loading" text="Resetar" prepend-icon="mdi-reload" color="info" style="margin-left: 10px"/>
 </template>
 
 <script>
@@ -44,7 +44,8 @@ export default {
     prints: [],
     printsLocais: [],
     slotsDisponiveis: 5,
-    modifications: []
+    deletions: [],
+    loading: false
   }),
   computed: {
     renderizarPrints() {
@@ -52,7 +53,6 @@ export default {
       for (let i = 0; i < this.prints.length; i++) {
         files.push(this.$getImg(this.prints[i], "anime/print"));
       }
-      console.log('slots disponíveis: ', this.slotsDisponiveis);
       return files;
     },
     renderizarPrintsLocais() {
@@ -60,7 +60,6 @@ export default {
       for (let i = 0; i < this.printsLocais.length; i++) {
         files.push(URL.createObjectURL(this.printsLocais[i]));
       }
-      console.log('slots disponíveis: ', this.slotsDisponiveis);
       return files;
     },
     hasModification(){
@@ -88,7 +87,7 @@ export default {
       if (opcao === 1) {
         if (this.prints.includes(img.split("/").pop())) {
           this.prints.splice(this.prints.indexOf(img.split("/").pop()), 1);
-          this.modifications.push(img.split("/").pop());
+          this.deletions.push(img.split("/").pop());
         }
       } else {
         this.printsLocais.splice(img, 1);
@@ -97,27 +96,69 @@ export default {
     },
     inputPrintsEvent(event) {
       let limiteIndex = this.slotsDisponiveis > event.target.files.length ? event.target.files.length : this.slotsDisponiveis;
-      console.log('arquivos:');
       for (let i = 0; i < limiteIndex; i++) {
         if(this.slotsDisponiveis > 0){
           this.printsLocais.push(event.target.files[i]);
           this.slotsDisponiveis = this.slotsDisponiveis - 1;
         }
       }
+    },
+    setPrints(){
+      if (this.$props.animePrints !== "p") {
+        this.prints = this.$props.animePrints.split("_");
+        this.slotsDisponiveis = this.slotsDisponiveis - this.prints.length;
+      }
+    },
+    resetar(){
+      this.prints = [];
+      this.printsLocais = [];
+      this.slotsDisponiveis = 5;
+      this.deletions = [];
+      this.setPrints();
+    },
+    salvarPrints(){
+      this.loading = true;
+      const form = new FormData();
+
+      for (let i = 0; i < this.printsLocais.length; i++) {
+        form.append('imgs', this.printsLocais[i]);
+      }
+      form.append('idAnime', this.$props.idAnime);
+      if(this.prints.length > 0){
+        for (let i = 0; i < this.prints.length; i++) {
+          form.append('manter', this.prints);
+        }
+      }
+      if(this.deletions.length > 0){
+        for (let i = 0; i < this.deletions.length; i++) {
+          form.append('deletions', this.deletions);
+        }
+      }
+
+      this.axios.put('admin/anime/alterarPrints', form, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }).then((res) => {
+        console.log(res.data);
+        this.$emit('reloadAnime');
+      }).finally(() => {
+        this.loading = false;
+      });
     }
   },
   props: {
     animePrints: {
       type: String,
       required: true
+    },
+    idAnime: {
+      type: Number,
+      required: true
     }
   },
-  mounted(){
-    if (this.$props.animePrints !== "p") {
-      this.prints = this.$props.animePrints.split("_");
-      this.slotsDisponiveis = this.slotsDisponiveis - this.prints.length;
-    }
-    console.log('slots: ', this.slotsDisponiveis);
+  mounted() {
+    this.setPrints();
   }
 };
 </script>
