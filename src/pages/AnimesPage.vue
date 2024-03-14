@@ -259,7 +259,7 @@ export default {
         this.generos = value.data.generos;
       });
     },
-    pesquisaAvancada(){
+    pesquisaAvancada(){//TODO: corrigir erro de paginação na pesquisa
       this.searchLoading = true;
       let conditions = [];
       let strQuery = 'anime/pesquisaAvancada?';

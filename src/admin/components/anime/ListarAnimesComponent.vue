@@ -327,9 +327,9 @@
           </v-form>
         </v-card-text>
         <v-card-actions>
-          <v-btn @click="salvarEdit" prepend-icon="mdi-content-save" variant="tonal" text="Salvar" style="margin: 5px" color="success"
+          <v-btn @click="salvarEdit" :loading="loadingEditSave" prepend-icon="mdi-content-save" variant="tonal" text="Salvar" style="margin: 5px" color="success"
                  theme="light" />
-          <v-btn prepend-icon="mdi-cancel" variant="tonal" text="Fechar" style="margin: 5px" color="primary"
+          <v-btn :loading="loadingEditSave" prepend-icon="mdi-cancel" variant="tonal" text="Fechar" style="margin: 5px" color="primary"
                  theme="light" />
         </v-card-actions>
       </v-card>
@@ -422,7 +422,8 @@ export default {
       }
     },
     generos: [],
-    anos: []
+    anos: [],
+    loadingEditSave: false
   }),
   methods: {
     carregarAnimes() {
