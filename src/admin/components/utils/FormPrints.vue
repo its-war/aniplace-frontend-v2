@@ -45,7 +45,8 @@ export default {
     printsLocais: [],
     slotsDisponiveis: 5,
     deletions: [],
-    loading: false
+    loading: false,
+    update: false
   }),
   computed: {
     renderizarPrints() {
@@ -63,12 +64,14 @@ export default {
       return files;
     },
     hasModification(){
-      if(this.printsLocais.length > 0){
-        return true;
-      }
-      if(this.$props.animePrints !== "p"){
-        if(this.prints.length !== this.$props.animePrints.split("_").length){
+      if(!this.update){
+        if(this.printsLocais.length > 0){
           return true;
+        }
+        if(this.$props.animePrints !== "p"){
+          if(this.prints.length !== this.$props.animePrints.split("_").length){
+            return true;
+          }
         }
       }
 
@@ -84,6 +87,7 @@ export default {
      * @param opcao 1 = prints, 2 = printsLocais
      */
     removerPrint(img, opcao = 1) {
+      this.update = false;
       if (opcao === 1) {
         if (this.prints.includes(img.split("/").pop())) {
           this.prints.splice(this.prints.indexOf(img.split("/").pop()), 1);
@@ -95,6 +99,7 @@ export default {
       this.slotsDisponiveis = this.slotsDisponiveis + 1;
     },
     inputPrintsEvent(event) {
+      this.update = false;
       let limiteIndex = this.slotsDisponiveis > event.target.files.length ? event.target.files.length : this.slotsDisponiveis;
       for (let i = 0; i < limiteIndex; i++) {
         if(this.slotsDisponiveis > 0){
@@ -141,7 +146,12 @@ export default {
         }
       }).then((res) => {
         if(res.data.anime){
-          this.$emit('reloadAnime', this.$props.idAnime);
+          this.deletions = [];
+          this.update = true;
+          this.$emit('reloadAnimePrints', this.$props.idAnime);
+          setTimeout(() => {
+            this.$forceUpdate();
+          }, 5000);
         }
       }).finally(() => {
         this.loading = false;
@@ -161,7 +171,7 @@ export default {
   mounted() {
     this.setPrints();
   },
-  emits: ['reloadAnime']
+  emits: ['reloadAnimePrints']
 };
 </script>
 
