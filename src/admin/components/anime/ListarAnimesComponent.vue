@@ -305,7 +305,7 @@
 
             <v-divider />
 
-            <FormPrints :anime-prints="dialog.anime.data.prints" :id-anime="this.dialog.anime.data.idAnime"/>
+            <FormPrints :anime-prints="dialog.anime.data.prints" :id-anime="this.dialog.anime.data.idAnime" @reloadAnime="recarregarAnime"/>
 
             <v-divider style="margin-top: 10px"/>
 
@@ -548,6 +548,33 @@ export default {
     capaUploadEvent(event) {
       this.dialog.loading.anime.capa = true;
       this.uploadFotoEvent(event, 2);
+    },
+    async recarregarAnime(idAnime){
+      let anime = await this.baixarDadosAnime(idAnime);
+      if(typeof anime.prints !== "string"){
+        anime.prints = anime.prints.join("_");
+      }
+
+      let index = this.dados.animes.findIndex(anime => anime.idAnime === idAnime);
+      if(index !== -1){
+        this.dados.animes[index] = anime;
+      }
+
+      index = this.pesquisa.resultado.findIndex(anime => anime.idAnime === idAnime);
+      if(index !== -1){
+        this.pesquisa.resultado[index] = anime;
+      }
+
+      this.dialog.anime.active = false;
+    },
+    baixarDadosAnime(idAnime){
+      return new Promise((resolve, reject) => {
+        this.axios.get('anime/listar?id=' + idAnime).then((res) => {
+          resolve(res.data[0]);
+        }).catch(() => {
+          reject(false);
+        });
+      });
     }
   },
   watch: {

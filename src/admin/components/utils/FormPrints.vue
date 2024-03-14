@@ -126,12 +126,12 @@ export default {
       form.append('idAnime', this.$props.idAnime);
       if(this.prints.length > 0){
         for (let i = 0; i < this.prints.length; i++) {
-          form.append('manter', this.prints);
+          form.append('manter', this.prints[i]);
         }
       }
       if(this.deletions.length > 0){
         for (let i = 0; i < this.deletions.length; i++) {
-          form.append('deletions', this.deletions);
+          form.append('deletions', this.deletions[i]);
         }
       }
 
@@ -140,8 +140,9 @@ export default {
           'Content-Type': 'multipart/form-data'
         }
       }).then((res) => {
-        console.log(res.data);
-        this.$emit('reloadAnime');
+        if(res.data.anime){
+          this.$emit('reloadAnime', this.$props.idAnime);
+        }
       }).finally(() => {
         this.loading = false;
       });
@@ -159,7 +160,8 @@ export default {
   },
   mounted() {
     this.setPrints();
-  }
+  },
+  emits: ['reloadAnime']
 };
 </script>
 
