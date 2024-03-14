@@ -565,7 +565,11 @@ export default {
         this.pesquisa.resultado[index] = anime;
       }
 
-      this.dialog.anime.active = false;
+      this.dialog.anime.data = anime;
+      this.parseGenerosToVModelFormat();
+      this.parseSinopseToVModelFormat();
+      this.parseTipoToVModelFormat();
+      this.$forceUpdate();
     },
     baixarDadosAnime(idAnime){
       return new Promise((resolve, reject) => {
