@@ -185,13 +185,12 @@
                   <v-file-input
                     style="display: none"
                     accept="image/*"
-                    v-model="dialog.anime.fotoLocal"
                     ref="fotoLocal"
                     @change="fotoUploadEvent"
                   />
 
                   <v-img class="ma-auto" aspect-ratio="9/16" width="50%"
-                         :src="$getImg(dialog.anime.data.foto, 'anime/foto')" style="border-radius: 10px" />
+                         :src="dialog.anime.fotoLocal ?? $getImg(dialog.anime.data.foto, 'anime/foto')" style="border-radius: 10px" />
                   <v-btn :loading="dialog.loading.anime.foto" @click="fotoInputClick" text="Mudar Foto" color="info" variant="tonal" style="margin-top: 5px" />
                 </div>
               </v-col>
@@ -200,13 +199,12 @@
                   <v-file-input
                     style="display: none"
                     accept="image/*"
-                    v-model="dialog.anime.capaLocal"
                     ref="capaLocal"
                     @change="capaUploadEvent"
                   />
 
                   <v-img class="ma-auto" aspect-ratio="16/9" width="95%"
-                         :src="$getImg(dialog.anime.data.capa, 'anime/capa')" style="border-radius: 10px" />
+                         :src="dialog.anime.capaLocal ?? $getImg(dialog.anime.data.capa, 'anime/capa')" style="border-radius: 10px" />
                   <v-btn :loading="dialog.loading.anime.capa" @click="capaInputClick" text="Mudar Capa" color="success" variant="tonal" style="margin-top: 5px" />
                 </div>
               </v-col>
@@ -499,7 +497,38 @@ export default {
     parseTipoToVModelFormat() {
       this.dialog.anime.data.tipo = this.dialog.anime.data.tipo === 2;
     },
-    salvarEdit(){},
+    salvarEdit(){
+      this.loadingEditSave = true;
+
+      const animeDataObject = {
+        id: this.dialog.anime.data.idAnime,
+        nome: this.dialog.anime.data.nome,
+        nomeAlternativo: this.dialog.anime.data.nomeAlternativo,
+        generos: this.dialog.anime.data.generos.join(','),
+        status: this.dialog.anime.data.status,
+        dia: this.dialog.anime.data.dia,
+        ano: this.dialog.anime.data.ano,
+        disponibilidade: this.dialog.anime.data.disponibilidade,
+        site: this.dialog.anime.data.site,
+        myanimelist: this.dialog.anime.data.myanimelist,
+        tipo: this.dialog.anime.data.tipo ? 2 : 1,
+        sinopse: this.dialog.anime.data.sinopse,
+        temporadaLancamento: this.dialog.anime.data.temporadaLancamento
+      };
+
+      this.axios.put("admin/anime/alterar", animeDataObject).then((res) => {
+        if(res.data){
+          this.carregarAnimes();
+          this.dialog.anime.active = false;
+          // this.$store.commit('setSnackbar', {
+          //   text: 'Anime editado com sucesso.',
+          //   color: 'success'
+          // }); TODO: implementar um snackbar global para servir de padrão para os avisos do sistema
+        }
+      }).finally(() => {
+        this.loadingEditSave = false;
+      });
+    },
     fotoInputClick() {
       this.$refs.fotoLocal.click();
     },
@@ -536,6 +565,7 @@ export default {
               this.pesquisa.resultado[indexSearch].capa = res.data.img;
             }
           }
+          this.$forceUpdate();
         }
       }).finally(() => {
         this.dialog.loading.anime.foto = false;
@@ -544,10 +574,12 @@ export default {
     },
     fotoUploadEvent(event) {
       this.dialog.loading.anime.foto = true;
+      this.dialog.anime.fotoLocal = URL.createObjectURL(event.target.files[0]);
       this.uploadFotoEvent(event, 1);
     },
     capaUploadEvent(event) {
       this.dialog.loading.anime.capa = true;
+      this.dialog.anime.capaLocal = URL.createObjectURL(event.target.files[0]);
       this.uploadFotoEvent(event, 2);
     },
     async atualizarAnimePrints(idAnime){
