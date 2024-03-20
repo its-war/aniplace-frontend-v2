@@ -10,7 +10,14 @@ export default defineStore('main', {
         totalPages: 1,
         tituloVerTodos: '',
         adsActive: true,
-        lastRoutePath: ''
+        lastRoutePath: '',
+        snackbar: {
+            show: false,
+            text: '',
+            color: 'success',
+            timeout: 10000,
+            icon: 'mdi-check'
+        }
     }),
     getters: {
         getAdblockValue: (state) => {
@@ -39,6 +46,9 @@ export default defineStore('main', {
         },
         getLastRoutePath: (state) => {
             return state.lastRoutePath;
+        },
+        getSnackbar: (state) => {
+            return state.snackbar;
         }
     },
     actions: {
@@ -111,6 +121,24 @@ export default defineStore('main', {
                     resolve(null);
                 });
             });
+        },
+        /**
+         *
+         * @param show {Boolean}
+         * @param text {String}
+         * @param color {String}
+         * @param timeout {Number}
+         * @param icon {String}
+         */
+        setSnackbar(show, text, color = 'success', timeout = 10000, icon = 'mdi-check') {
+            this.snackbar.show = show;
+            this.snackbar.text = text;
+            this.snackbar.color = color;
+            this.snackbar.timeout = timeout;
+            this.snackbar.icon = icon;
+        },
+        closeSnackbar(){
+            this.snackbar.show = false;
         }
     }
 });

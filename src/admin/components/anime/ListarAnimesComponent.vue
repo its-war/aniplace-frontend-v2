@@ -520,10 +520,7 @@ export default {
         if(res.data){
           this.carregarAnimes();
           this.dialog.anime.active = false;
-          // this.$store.commit('setSnackbar', {
-          //   text: 'Anime editado com sucesso.',
-          //   color: 'success'
-          // }); TODO: implementar um snackbar global para servir de padrão para os avisos do sistema
+          this.$store.main.setSnackbar(true, 'Anime editado com sucesso.');
         }
       }).finally(() => {
         this.loadingEditSave = false;
