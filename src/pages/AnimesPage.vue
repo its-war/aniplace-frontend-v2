@@ -339,6 +339,8 @@ export default {
     this.listarGeneros();
 
     if(this.$route.query.text){
+      this.resetarBuscas();//TODO: resolver problema da pesquisa de texto vindo do
+                           //TODO: input no navbar quando já tem uma pesquisa avançada em andamento
       this.pesquisaSimples.texto = this.$route.query.text;
     }
 
