@@ -194,7 +194,8 @@ export default {
     paginatorSearch: {
       animes:[],
       pagina: 1,
-      total: 0
+      total: 0,
+      enabled: false
     },
     pesquisaSimples: {
       animes: [],
@@ -243,24 +244,29 @@ export default {
       window.open(apiUrl + path, '_blank');
     },
     pullData(){
-      this.paginator.animes = [];
-      this.pageLoading = true;
-      this.axios.get('anime/listar?pagina=' + this.paginator.pagina).then((value) => {
-        if(value.data){
-          this.paginator.animes = value.data.animes;
-          this.paginator.total = value.data.total;
-        }
-      }).finally(() => {
-        this.pageLoading = false;
-      });
+      if(this.paginatorSearch.enabled){
+        this.pesquisaAvancada();
+      }else{
+        this.paginator.animes = [];
+        this.pageLoading = true;
+        this.axios.get('anime/listar?pagina=' + this.paginator.pagina).then((value) => {
+          if(value.data){
+            this.paginator.animes = value.data.animes;
+            this.paginator.total = value.data.total;
+          }
+        }).finally(() => {
+          this.pageLoading = false;
+        });
+      }
     },
     listarGeneros(){
       this.axios.get('anime/listarGeneros').then((value) => {
         this.generos = value.data.generos;
       });
     },
-    pesquisaAvancada(){//TODO: corrigir erro de paginação na pesquisa
+    pesquisaAvancada(){
       this.searchLoading = true;
+      this.paginatorSearch.enabled = true;
       let conditions = [];
       let strQuery = 'anime/pesquisaAvancada?';
 
@@ -292,7 +298,7 @@ export default {
           this.paginatorSearch.animes = value.data.animes;
           this.paginatorSearch.total = value.data.total;
           this.filtros.enabled = true;
-          this.paginatorSearch.pagina = 1;
+          // this.paginatorSearch.pagina = 1;
           this.paginator.pagina = 1;
           this.filtrosDialog = false;
         }
@@ -307,6 +313,7 @@ export default {
       this.paginatorSearch.animes = [];
       this.paginatorSearch.total = 0;
       this.filtros.enabled = false;
+      this.paginatorSearch.enabled = false;
 
       this.pesquisaSimples.enabled = false;
       this.pesquisaSimples.animes = [];
@@ -361,6 +368,9 @@ export default {
     },
     '$route.query.text'(newValue){
       this.pesquisaSimples.texto = newValue;
+    },
+    'paginatorSearch.pagina'(newValue){
+      this.$router.push({name: 'Animes', params: {pagina: newValue}});
     }
   },
   computed: {
