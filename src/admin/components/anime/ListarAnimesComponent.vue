@@ -489,7 +489,7 @@ export default {
     parseGenerosToVModelFormat() {
       this.dialog.anime.data.generos = this.dialog.anime.data.generos.map(genero => genero.idGenero);
     },
-    parseSinopseToVModelFormat() {
+    parseSinopseToVModelFormat() {//TODO: corrigir método para se adequar com a api
       if(Array.isArray(this.dialog.anime.data.sinopse)){
         this.dialog.anime.data.sinopse = this.dialog.anime.data.sinopse.join("\n");
       }
