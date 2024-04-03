@@ -60,6 +60,7 @@
                       append-inner-icon="mdi-magnify"
                       variant="outlined"
                       density="compact"
+                      id="appbar-search-field"
                       v-model="pesquisa.text"
                       @keyup="pesquisar"
                       @focus="pesquisa.resultado.length > 0 ? pesquisa.painel = true : false"
@@ -191,7 +192,7 @@
                   v-model="mobileSearch"
                   v-on:click:appendInner="search(mobileSearch)"
                   v-on:keydown.enter="search(mobileSearch)"
-                  ref="searchDrawer"
+                  id="drawer-search-field"
     ></v-text-field>
   </v-navigation-drawer>
   <div class="body-event-click">
@@ -303,7 +304,13 @@ export default {
         this.pesquisa.text = '';
         this.pesquisa.resultado = [];
         this.menuMobile = false;
-        this.$refs.searchDrawer.blur();
+        let el = null;
+        if(this.isMobile){
+          el = document.getElementById('drawer-search-field');
+        }else{
+          el = document.getElementById('appbar-search-field');
+        }
+        el.blur();
       }
     },
     logout(){
