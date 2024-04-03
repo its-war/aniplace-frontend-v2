@@ -324,6 +324,8 @@ export default {
       this.paginator.pagina = 1;
     },
     pesquisarPorTexto(){
+      this.paginatorSearch.enabled = false;
+      this.filtros.enabled = false;
       if(this.pesquisaSimples.texto.length){
         this.axios.get('anime/pesquisa?texto=' + this.pesquisaSimples.texto + '&pagina=' + this.pesquisaSimples.pagina).then((value) => {
           this.pesquisaSimples.animes = value.data.animes;
@@ -339,8 +341,6 @@ export default {
     this.listarGeneros();
 
     if(this.$route.query.text){
-      this.resetarBuscas();//TODO: resolver problema da pesquisa de texto vindo do
-                           //TODO: input no navbar quando já tem uma pesquisa avançada em andamento
       this.pesquisaSimples.texto = this.$route.query.text;
     }
 
