@@ -15,6 +15,10 @@ const apiUrl = import.meta.env.MODE === 'production' ? config.production : confi
 
 const head = createHead();
 
+//Variável de controle do site, ela serve para mudar a forma como os dados
+//serão carregados: da API Aniplace ou do Firebase Firestore
+const isFirebaseApi = true;
+
 import limitarTexto from "@/utils/limitarTexto";
 import getImg from "@/utils/getImg";
 
@@ -183,6 +187,7 @@ app.config.globalProperties.$limitarTexto = limitarTexto
 app.config.globalProperties.$getImg = getImg
 app.config.globalProperties.$socket = io(apiUrl)
 app.config.globalProperties.$urlBase = apiUrl
+app.config.globalProperties.isFirebaseApi = isFirebaseApi
 
 app.mount('#app')
 
