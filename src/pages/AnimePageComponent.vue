@@ -168,7 +168,7 @@
         </v-window-item>
       </v-window>
     </div>
-    <article style="z-index: 3; position: relative; width: 80%; margin: auto" :style="isMobile?'width: 95%':''">
+    <article v-if="!isFirebase" style="z-index: 3; position: relative; width: 80%; margin: auto" :style="isMobile?'width: 95%':''">
       <ComentariosComponent v-if="anime.idAnime" :tipo="2" :id-origem="anime.idAnime"/>
     </article>
   </div>
@@ -184,6 +184,7 @@ import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 
 export default {
   name: "AnimePageComponent",
+  inject: ['repository'],
   components: { AdsComponent, ComentariosComponent, ViewCountComponent, MyanimelistIcon},
   computed: {
     isMobile(){
@@ -266,6 +267,9 @@ export default {
         }
       }
       return '';
+    },
+    isFirebase(){
+      return this.isFirebaseApiOrigin;
     }
   },
   data: () => ({
@@ -369,16 +373,24 @@ export default {
       window.open(url, '_blank');
     },
     loadPage(){
-      this.carregarAnimeNota();
+      if(this.isFirebase){
+        this.repository.animes.getById(this.$route.params.id).then(async (value) => {
+          this.anime = value;
+          document.title = this.anime.nome + ' — Aniplace';
+          this.anime.generos = await this.repository.generos.getGenerosAnime(this.anime.generos);
+        });
+      }else{
+        this.carregarAnimeNota();
 
-      this.axios.get('rating/getVoto?idAnime=' + this.$route.params.id).then((response) => {
-        this.userNota = response.data.nota;
-      });
+        this.axios.get('rating/getVoto?idAnime=' + this.$route.params.id).then((response) => {
+          this.userNota = response.data.nota;
+        });
 
-      this.axios.get('anime/listar?id=' + this.$route.params.id).then((value) => {
-        this.anime = value.data[0];
-        document.title = this.anime.nome + ' — Aniplace';
-      });
+        this.axios.get('anime/listar?id=' + this.$route.params.id).then((value) => {
+          this.anime = value.data[0];
+          document.title = this.anime.nome + ' — Aniplace';
+        });
+      }
     },
     getEpisodioNumero(n){
       if(n < 10){

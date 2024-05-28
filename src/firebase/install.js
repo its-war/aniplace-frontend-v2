@@ -1,7 +1,9 @@
 import Anime from './Anime'
+import Genero from './Genero'
 
 export default function install(app){
   app.provide('repository', {
-    animes: Anime
+    animes: Anime,
+    generos: Genero
   });
 }

@@ -18,7 +18,7 @@
            append-icon="mdi-page-next-outline"
            style="position: absolute; top: 0; right: 50px">Ver todos</v-btn>
 
-    <v-slide-group v-model="slider" show-arrows="always" v-if="$props.isAnime">
+    <v-slide-group v-model="slider" :show-arrows="true" v-if="$props.isAnime">
       <SliderItemComponent
           v-for="(anime, i) in $props.animeList.slice(0, 10)" :key="i" :is-anime="$props.isAnime"
           :id="anime.idAnime" :temporada="anime.temporada > 1 ? anime.temporada : null"
@@ -29,7 +29,7 @@
       />
     </v-slide-group>
 
-    <v-slide-group v-model="slider" v-else show-arrows="always">
+    <v-slide-group v-model="slider" v-else :show-arrows="true">
       <SliderItemComponent
           v-for="(episodio, i) in $props.animeList.slice(0, 10)" :key="i" :is-anime="$props.isAnime"
           :id="episodio.anime.idAnime" :temporada="episodio.temporada > 1 ? episodio.temporada : null"
