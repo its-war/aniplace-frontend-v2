@@ -18,7 +18,7 @@
 
         <span v-if="$props.showNota"><v-icon icon="mdi-star" color="yellow"/>{{parseFloat($props.nota).toFixed(2)}}</span>
       </div>
-      <img :src="$getImg($props.foto, 'anime/capa')" :alt="$props.nome" style="height: 100%"/>
+      <img :src="getFoto" :alt="$props.nome" style="height: 100%"/>
       <div class="item-nome" :style="isMobile?'font-size: 11px;':''">
         <h4>{{$limitarTexto($props.nome, 18)}}</h4>
       </div>
@@ -29,6 +29,7 @@
 <script>
 export default {
   name: "SliderItemComponent",
+  inject: ['repository'],
   props: {
     id: {
       type: Number,
@@ -74,6 +75,9 @@ export default {
   computed: {
     isMobile(){
       return this.$vuetify.display.mobile;
+    },
+    isFirebase(){
+      return this.isFirebaseApiOrigin;
     }
   },
   methods: {
@@ -89,6 +93,13 @@ export default {
             numero: this.$props.numero
           }
         });
+      }
+    },
+    async getFoto(){// TODO: corrigir problema no carregamento da imagem do firebase
+      if(this.isFirebase){
+        return await this.repository.animes.getAnimeImgUrl(null, 'capa', this.$props.foto);
+      }else{
+        return this.$getImg(this.$props.foto, 'anime/capa');
       }
     }
   }

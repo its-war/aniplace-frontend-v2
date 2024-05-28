@@ -204,29 +204,33 @@ router.beforeEach(async (to, from, next) => {
 
   let rota = to.path.split('/')[1];
 
-  if(logged){
-    if(user.getRanking === 5 || user.getRanking >= 10){
-      main.setAdsOff();
-    }
+  if((to.name === 'Login' || to.name === 'Cadastro') && window._isFirebaseApiOrigin){
+    next({name: 'Home'});
+  }else{
+    if(logged){
+      if(user.getRanking === 5 || user.getRanking >= 10){
+        main.setAdsOff();
+      }
 
-    if(rota === 'admin'){
-      if(user.getRanking > 5){
+      if(rota === 'admin'){
+        if(user.getRanking > 5){
+          next();
+        }else{
+          next({name: 'Home'});
+        }
+      }else if(to.name !== 'Login'){
         next();
       }else{
         next({name: 'Home'});
       }
-    }else if(to.name !== 'Login'){
-      next();
     }else{
-      next({name: 'Home'});
-    }
-  }else{
-    if(rota === 'admin'){
-      next({name: 'Home'});
-    }else if(to.name === 'Meu Perfil'){
-      next({name: 'Home'});
-    }else{
-      next();
+      if(rota === 'admin'){
+        next({name: 'Home'});
+      }else if(to.name === 'Meu Perfil'){
+        next({name: 'Home'});
+      }else{
+        next();
+      }
     }
   }
 })

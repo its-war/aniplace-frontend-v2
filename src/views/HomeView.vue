@@ -33,7 +33,7 @@
         @click.middle.prevent="abrirNovaAba('/admin/')"
         @click.left="goRoute('Admin Home')">Admin</v-btn><!-- v-show="!isMobile" -->
 
-      <v-btn icon tag="a" v-show="!isMobile">
+      <v-btn v-if="!isFirebase" icon tag="a" v-show="!isMobile">
         <v-avatar v-if="isLogged && $store.user.getFoto" :image="$getImg($store.user.getFoto, 'user/foto')"></v-avatar>
         <v-icon v-else icon="mdi-account"/>
         <v-menu activator="parent">
@@ -102,7 +102,7 @@
   <v-navigation-drawer :scrim="false" v-model="activeDrawer" :rail="onAdminPage" :expand-on-hover="onAdminPage" class="drawer-mobile">
 
     <template v-slot:prepend>
-      <v-list>
+      <v-list v-if="!isFirebase">
         <v-list-group value="avatar">
           <template v-slot:activator="{props}">
             <v-list-item
@@ -203,6 +203,12 @@
     </router-view>
   </div>
   <FooterComponent/>
+<!--  <pre>{{animes}}</pre>-->
+<!--  <v-file-input-->
+<!--    v-model="imgUploadAnime"-->
+<!--    label="Selecione a imagem do anime"-->
+<!--  />-->
+<!--  <v-btn v-if="imgUploadAnime" color="success" text="enviar" @click="uploadAnimeImg"/>-->
 </template>
 
 <script>
@@ -212,6 +218,7 @@ import FooterComponent from "@/components/globalComponents/FooterComponent.vue";
 import {useFadeIn, useFadeOut} from '@/utils/animations';
 import config from "../../config";
 export default {
+  inject: ['repository'],
   components: {FooterComponent},
   computed: {
     getLarguraJanela(){
@@ -251,6 +258,9 @@ export default {
     },
     onAdminPage(){
       return this.$route.path.split('/')[1] === 'admin';
+    },
+    isFirebase(){
+      return this.isFirebaseApiOrigin;
     }
   },
   data: () => ({
@@ -260,7 +270,9 @@ export default {
       resultado: [],
       painel: false
     },
-    mobileSearch: ''
+    mobileSearch: '',
+    animes: [],
+    imgUploadAnime: null
   }),
   methods: {
     goRoute(nomeRota, params = false){
@@ -335,9 +347,22 @@ export default {
     },
     searchClickOut(){
       this.pesquisa.painel = false;
+    },
+    async uploadAnimeImg(){
+      // const url = await this.repository.animes.upload(582, 'capa', this.imgUploadAnime);
+      const url = await this.repository.animes.getAnimeImgUrl(null, 'foto', 'anime-foto-1689959135119-1126553558087.jpg');
+      console.log(url);
+    },
+    async listAllAnimes(){
+      const res = await this.axios.get('anime/listarTodos');
+      this.animes = res.data.animes;
+    },
+    async listAllEpisodios(idAnime){
+      const res = await this.axios.get('episodio/listar?idAnime=' + idAnime);
+      return res.data.temporadas;
     }
   },
-  mounted() {
+  async mounted() {
     if(!this.isMobile){
       let appbar = document.getElementById('appbar');
       document.addEventListener('scroll', () => {
@@ -353,6 +378,16 @@ export default {
     body.addEventListener('click', () => {
       this.menuMobile = false;
     });
+
+    // await this.listAllAnimes();
+    // for (let i = 0; i < this.animes.length; i++) {
+    //   this.animes[i].temporadas = await this.listAllEpisodios(this.animes[i].idAnime);
+    //   // await this.repository.animes.save(this.animes[i], this.animes[i].idAnime);
+    // }
+
+    //TODO: aplicar o uso da variável global de controle do firebase ou api
+
+    // this.animes = await this.repository.animes.listAll();
   }
 }
 </script>

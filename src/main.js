@@ -10,6 +10,9 @@ import VuePlyr from 'vue-plyr'
 import 'vue-plyr/dist/vue-plyr.css'
 import config from '../config';
 import { createHead } from '@vueuse/head';
+import {VueFire, VueFireDatabaseOptionsAPI, VueFireFirestoreOptionsAPI} from "vuefire";
+import { firebaseApp } from './firebase'
+import Firebase from './firebase/install'
 
 const apiUrl = import.meta.env.MODE === 'production' ? config.production : config.development;
 
@@ -17,7 +20,7 @@ const head = createHead();
 
 //Variável de controle do site, ela serve para mudar a forma como os dados
 //serão carregados: da API Aniplace ou do Firebase Firestore
-const isFirebaseApi = true;
+const isFirebaseApi = import.meta.env.VITE_API_ORIGIN === 'Firebase';
 
 import limitarTexto from "@/utils/limitarTexto";
 import getImg from "@/utils/getImg";
@@ -174,6 +177,14 @@ app.use(VuePlyr, {
     }
 })
 app.use(head)
+app.use(VueFire, {
+    firebaseApp: firebaseApp,
+    modules: [VueFireDatabaseOptionsAPI, VueFireFirestoreOptionsAPI({
+        reset: true,
+        wait: false
+    })]
+})
+app.use(Firebase)
 
 // Store Instance
 const store = {
@@ -187,8 +198,9 @@ app.config.globalProperties.$limitarTexto = limitarTexto
 app.config.globalProperties.$getImg = getImg
 app.config.globalProperties.$socket = io(apiUrl)
 app.config.globalProperties.$urlBase = apiUrl
-app.config.globalProperties.isFirebaseApi = isFirebaseApi
+app.config.globalProperties.isFirebaseApiOrigin = isFirebaseApi
 
 app.mount('#app')
 
 window._axios = axiosInstance
+window._isFirebaseApiOrigin = isFirebaseApi

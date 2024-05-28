@@ -2,7 +2,7 @@
   <div>
     <CarouselComponent @isReady="carregarTudo"/>
     <v-main>
-      <SliderComponent v-if="ultimosLancamentos.list.length > 0"
+      <SliderComponent v-if="ultimosLancamentos.list.length > 0 && !isFirebase"
                        :anime-list="ultimosLancamentos.list"
                        :total-pages="ultimosLancamentos.total"
                        slide-nome="Lançamentos da semana"
@@ -23,14 +23,14 @@
                        :is-anime="true"
                        :show-episodios="false"/>
 
-      <SliderComponent v-if="futurosLancamentos.length > 0"
+      <SliderComponent v-if="futurosLancamentos.length > 0 && !isFirebase"
                        :is-anime="true"
                        :show-episodios="false"
                        icon="mdi-calendar-clock"
                        :anime-list="futurosLancamentos"
                        slide-nome="Futuros Lançamentos"/>
 
-      <SliderComponent v-if="topAnimes.length > 0"
+      <SliderComponent v-if="topAnimes.length > 0 && !isFirebase"
                        slide-nome="Top animes"
                        icon="mdi-podium"
                        icon-color="yellow"
@@ -39,7 +39,7 @@
                        :is-anime="true"
                        :show-nota="true"/>
 
-      <SliderComponent v-if="ultimos7Dias.length > 0"
+      <SliderComponent v-if="ultimos7Dias.length > 0 && !isFirebase"
                        slide-nome="Adicionados recentemente"
                        icon="mdi-history"
                        :show-only-temporada="true"
@@ -62,6 +62,7 @@ import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 export default {
   name: "HomeBodyComponent",
   components: { AdsComponent, CarouselComponent, SliderComponent},
+  inject: ['repository'],
   data: () => ({
     maisVistos: [],
     maisAcessados: [],
@@ -88,9 +89,15 @@ export default {
       });
     },
     carregarAnimesMaisAcessados(){
-      this.axios.get('anime/getMaisAcessados').then((response) => {
-        this.maisAcessados = response.data.animes;
-      });
+      if(this.isFirebase){
+        this.repository.animes.getMaisAcessados().then((animes) => {
+          this.maisAcessados = animes;
+        });
+      }else{
+        this.axios.get('anime/getMaisAcessados').then((response) => {
+          this.maisAcessados = response.data.animes;
+        });
+      }
     },
     carregarUltimos7Dias(){
       this.axios.get('episodio/getUltimos7Dias').then((response) => {
@@ -112,6 +119,11 @@ export default {
       this.axios.get('anime/getFuturosLancamentos').then((response) => {
         this.futurosLancamentos = response.data.futurosLancamentos;
       });
+    }
+  },
+  computed: {
+    isFirebase(){
+      return this.isFirebaseApiOrigin;
     }
   }
 }
