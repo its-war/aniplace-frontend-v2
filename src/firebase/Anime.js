@@ -109,6 +109,15 @@ export default class Anime {
     }
   }
 
+  static async episodioAddAcessos(idAnime, temporadas){
+    try{
+      const documentRef = doc(tableCollection, `/${idAnime}`);
+      await setDoc(documentRef, {temporadas: temporadas}, {merge: true});
+    }catch (e) {
+      console.error(e);
+    }
+  }
+
   /**
    * @description Envia uma foto/capa do anime
    * @param idAnime

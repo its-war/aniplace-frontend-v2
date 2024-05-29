@@ -1,0 +1,113 @@
+.main-episodio {
+    display: grid;
+    grid-template-areas: "title title title"
+                       "content content side";
+    grid-template-columns: 35% 35% 30%;
+}
+
+.anime-title {
+    grid-area: title;
+    padding-left: 30px;
+    margin-top: 10px;
+}
+
+.player-section {
+    grid-area: content;
+    padding: 5px 15px 0 15px;
+}
+
+.more-episodios {
+    grid-area: side;
+}
+
+.video-player {
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+
+.conteiner-episodios {
+    max-height: 500px;
+    overflow-y: auto;
+}
+
+.conteiner-episodios::-webkit-scrollbar {
+    width: 2px;
+}
+
+.conteiner-episodios::-webkit-scrollbar-thumb {
+    background-color: dodgerblue;
+}
+
+.conteiner-episodios::-webkit-scrollbar-track {
+    background-color: rgba(59, 59, 59, 0.5);
+}
+
+.conteiner-episodios::-ms-scrollbar {
+    width: 2px;
+}
+
+.conteiner-episodios::-ms-scrollbar-thumb {
+    background-color: dodgerblue;
+}
+
+.conteiner-episodios::-ms-scrollbar-track {
+    background-color: rgba(59, 59, 59, 0.5);
+}
+
+.conteiner-episodios::-moz-scrollbar {
+    width: 2px;
+}
+
+.conteiner-episodios::-moz-scrollbar-thumb {
+    background-color: dodgerblue;
+}
+
+.conteiner-episodios::-moz-scrollbar-track {
+    background-color: rgba(59, 59, 59, 0.5);
+}
+
+.aside-episodio {
+    margin-top: 1px;
+    display: grid;
+    grid-template-areas: "thumb episodiotitle episodiotitle";
+    grid-template-columns: 30% 35% 35%;
+    grid-template-rows: 65px;
+    cursor: pointer;
+    transition: 300ms ease-in-out;
+}
+
+.aside-episodio-active {
+    background-color: rgb(255,0,0);
+}
+
+.aside-episodio:hover {
+    background-color: black;
+}
+
+.aside-episodio:hover .thumb {
+    background-color: black;
+}
+
+.aside-episodio:hover .thumb .icon-play-episodio {
+    color: dodgerblue;
+}
+
+.thumb {
+    grid-area: thumb;
+    background-color: #3B3B3BFF;
+    text-align: center;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+    display: flex;
+    transition: 300ms ease-in-out;
+}
+
+.episodio-title {
+    grid-area: episodiotitle;
+    align-content: center;
+    align-items: center;
+    display: flex;
+    padding-left: 10px;
+    padding-right: 30px;
+}

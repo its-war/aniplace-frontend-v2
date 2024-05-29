@@ -95,6 +95,7 @@
       <div class="text-center">
         <div v-if="isFirebase">
           <v-btn prepend-icon="mdi-chevron-left" variant="text" text="Anterior" color="red" @click="firebasePreviousPage" :disabled="!firebasePaginator.hasPreviousPage || pageLoading"/>
+          <span style="padding: 8px 18px; background-color: #ff5454; color: white; border-radius: 10px">{{firebasePaginator.pagina}}</span>
           <v-btn append-icon="mdi-chevron-right" variant="text" text="Próximo" color="red" @click="firebaseNextPage" :disabled="!firebasePaginator.hasNextPage || pageLoading"/>
         </div>
         <div v-else>
@@ -127,7 +128,6 @@
 </template>
 
 <script>
-import config from "../../config";
 import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
 import AnimesPageImgComponent from "@/pages/AnimesPageImgComponent.vue";
 
@@ -233,7 +233,7 @@ export default {
               this.firebasePaginator.hasNextPage = values.value.length > 15;
               this.paginator.animes = values.value.slice(0, 15);
               this.pageLoading = false;
-            }, 1000);
+            }, 5000);//TODO: corrigir valor do timeout depois
           }).catch(() => {
             this.pageLoading = false;
           });
