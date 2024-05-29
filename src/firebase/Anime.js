@@ -99,6 +99,16 @@ export default class Anime {
     }
   }
 
+  static async addAcessos(anime){
+    anime.acessos = anime.acessos + 1;
+    try{
+      const documentRef = doc(tableCollection, `/${anime.idAnime}`);
+      await setDoc(documentRef, {acessos: anime.acessos}, {merge: true});
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   /**
    * @description Envia uma foto/capa do anime
    * @param idAnime
