@@ -14,7 +14,7 @@
             </div>
             <span class="anime-info" :style="isMobile?'font-size: 10px;':''">
               {{anime.status === 1 ? 'Completo' : null}}
-              {{anime.status === 2 ? 'Em Lançamento' : null}}
+              {{anime.status === 2 ? 'Em Lançamento' : null}}{{getDiaLancamento}}
               {{anime.status === 3 ? 'Incompleto' : null}}
               <v-tooltip text="Há episódios disponíveis em HD" location="top" theme="light">
                 <template v-slot:activator="{props}">
@@ -32,7 +32,7 @@
                 </template>
               </v-tooltip>
               {{anime.ano}}
-              <v-tooltip :text="totalVotos ? `Total de Votos: ${totalVotos}` : `Total de Votos: 0`" theme="light" location="top">
+              <v-tooltip v-if="!isFirebase" :text="totalVotos ? `Total de Votos: ${totalVotos}` : `Total de Votos: 0`" theme="light" location="top">
                 <template v-slot:activator="{props}">
                   <span v-bind="props" v-if="animeNota"><v-icon icon="mdi-star" color="yellow" style="margin-right: 0 !important;"></v-icon>{{getAnimeNota}}</span>
                   <span v-bind="props" v-else><v-icon icon="mdi-star" color="yellow" style="margin-right: 0 !important;"></v-icon>—</span>
@@ -48,7 +48,6 @@
                 <MyanimelistIcon @click="openSite(anime.myanimelist)" v-show="anime.myanimelist" style="fill: white; cursor: pointer" v-bind="props"/>
               </template>
             </v-tooltip>
-              {{getDiaLancamento}}
             </span>
             <div class="anime-votos" v-if="userIsLogged && !isMobile" style="padding-top: 5px; margin-bottom: 5px" :style="!isMobile? 'width: 250px' : ''">
               <v-select
@@ -177,7 +176,6 @@
 <script>
 import {useDisplay} from "vuetify";
 import {MyanimelistIcon} from 'vue3-simple-icons';
-import axiosLocal from 'axios';
 import ViewCountComponent from "@/components/ViewCountComponent.vue";
 import ComentariosComponent from "@/components/comments/ComentariosComponent.vue";
 import AdsComponent from "@/components/globalComponents/AdsComponent.vue";
@@ -251,19 +249,19 @@ export default {
       if(this.anime.status){
         if(this.anime.status === 2){
           if(this.anime.dia === 1)
-            return 'Todo domingo';
+            return ', todo domingo';
           if(this.anime.dia === 2)
-            return 'Toda segunda';
+            return ', toda segunda';
           if(this.anime.dia === 3)
-            return 'Toda terça';
+            return ', toda terça';
           if(this.anime.dia === 4)
-            return 'Toda quarta';
+            return ', toda quarta';
           if(this.anime.dia === 5)
-            return 'Toda quinta';
+            return ', toda quinta';
           if(this.anime.dia === 6)
-            return 'Toda sexta';
+            return ', toda sexta';
           if(this.anime.dia === 7)
-            return 'Toda sábado';
+            return ', todo sábado';
         }
       }
       return '';
@@ -378,6 +376,7 @@ export default {
           this.anime = value;
           document.title = this.anime.nome + ' — Aniplace';
           this.anime.generos = await this.repository.generos.getGenerosAnime(this.anime.generos);
+          await this.repository.animes.addAcessos(this.anime);
         });
       }else{
         this.carregarAnimeNota();
