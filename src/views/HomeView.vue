@@ -348,46 +348,25 @@ export default {
     searchClickOut(){
       this.pesquisa.painel = false;
     },
-    async uploadAnimeImg(){
-      // const url = await this.repository.animes.upload(582, 'capa', this.imgUploadAnime);
-      const url = await this.repository.animes.getAnimeImgUrl(null, 'foto', 'anime-foto-1689959135119-1126553558087.jpg');
-      console.log(url);
-    },
-    async listAllAnimes(){
-      const res = await this.axios.get('anime/listarTodos');
-      this.animes = res.data.animes;
-    },
-    async listAllEpisodios(idAnime){
-      const res = await this.axios.get('episodio/listar?idAnime=' + idAnime);
-      return res.data.temporadas;
+    scrollEventHandler(){
+      let appbar = document.getElementById('appbar');
+      if(window.scrollY === 0){
+        appbar?.classList.add('appbar-transparent');
+      }else{
+        appbar?.classList.remove('appbar-transparent');
+      }
     }
   },
   async mounted() {
     if(!this.isMobile){
-      let appbar = document.getElementById('appbar');
-      document.addEventListener('scroll', () => {
-        if(window.scrollY === 0){
-          appbar.classList.add('appbar-transparent');
-        }else{
-          appbar.classList.remove('appbar-transparent');
-        }
-      });
+      document.addEventListener('scroll', this.scrollEventHandler);
+      this.scrollEventHandler();
     }
 
     let body = document.querySelector('.body-event-click');
     body.addEventListener('click', () => {
       this.menuMobile = false;
     });
-
-    // await this.listAllAnimes();
-    // for (let i = 0; i < this.animes.length; i++) {
-    //   this.animes[i].temporadas = await this.listAllEpisodios(this.animes[i].idAnime);
-    //   // await this.repository.animes.save(this.animes[i], this.animes[i].idAnime);
-    // }
-
-    //TODO: aplicar o uso da variável global de controle do firebase ou api
-
-    // this.animes = await this.repository.animes.listAll();
   }
 }
 </script>
